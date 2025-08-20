@@ -159,6 +159,7 @@ export type hyperProviderTypes = {
 
 export type initPaymentSheetParamTypes = {
   readonly clientSecret: string;
+  readonly publishableKey: string;
   readonly merchantDisplayName?: string;
   readonly customerId?: undefined | string;
   readonly customerEphemeralKeySecret?: undefined | string;

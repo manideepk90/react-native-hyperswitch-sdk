@@ -1,4 +1,4 @@
-package io.hyperswitch
+package com.hyperswitchsdk
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -8,8 +8,7 @@ import android.os.Looper
 import android.os.Parcelable
 import androidx.annotation.RestrictTo
 import androidx.appcompat.app.AppCompatActivity
-import com.hyperswitchsdkreactnative.react.Utils
-//import io.hyperswitch.react.Utils
+import com.hyperswitchsdk.react.Utils
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

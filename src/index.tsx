@@ -1,5 +1,6 @@
-import HyperswitchSdk from './NativeHyperswitchSdk';
+export { useHyper } from './hooks/HyperHooks.gen';
+export { make as HyperProvider } from './context/HyperProvider.gen';
 
-export function multiply(a: number, b: number): number {
-  return HyperswitchSdk.multiply(a, b);
-}
+// Export types
+export type { sessionParams, initPaymentSheetParamTypes, responseFromNativeModule, savedPaymentMethodType, headlessConfirmResponseType } from './types/HyperTypes.gen';
+export type { confirmPaymentMethodArgumentType, confirmWithCustomerPaymentTokenArgumentType, useHyperReturnType } from './types/HyperCommonTypes.gen';

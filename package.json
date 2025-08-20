@@ -32,6 +32,10 @@
     "!**/.*"
   ],
   "scripts": {
+    "re:start": "rescript build -w",
+    "re:format": "rescript format -all",
+    "re:build": "rescript",
+    "re:clean": "rescript clean",
     "example": "yarn workspace react-native-hyperswitch-sdk-example",
     "test": "jest",
     "typecheck": "tsc",
@@ -58,6 +62,12 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
+  "dependencies": {
+    "@rescript/core": "^1.6.1",
+    "@rescript/react": "^0.14.0",
+    "rescript": "11",
+    "rescript-react-native": "^0.78.0"
+  },
   "devDependencies": {
     "@commitlint/config-conventional": "^19.6.0",
     "@eslint/compat": "^1.2.7",
@@ -75,6 +85,7 @@
     "eslint": "^9.22.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
+    "gentype": "^4.5.0",
     "jest": "^29.7.0",
     "prettier": "^3.0.3",
     "react": "19.0.0",

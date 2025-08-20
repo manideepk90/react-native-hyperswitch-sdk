@@ -1,13 +1,13 @@
-package io.hyperswitch
+package com.hyperswitchsdk
 
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
+//import android.util.Log
 import androidx.fragment.app.Fragment
 import com.facebook.hermes.reactexecutor.HermesExecutorFactory
-import com.facebook.react.HyperPackageList
+//import com.facebook.react.HyperPackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.bridge.Arguments
@@ -16,9 +16,8 @@ import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.common.LifecycleState
-import com.hyperswitchsdkreactnative.ReactNativeHyperswitchPackage
-import com.hyperswitchsdkreactnative.react.Utils
-import io.hyperswitch.payments.paymentlauncher.PaymentResult
+//import com.hyperswitchsdkreactnative.ReactNativeHyperswitchPackage
+import com.hyperswitchsdk.react.Utils
 import io.hyperswitch.paymentsheet.PaymentSheetResult
 import org.json.JSONObject
 
@@ -71,14 +70,14 @@ class PaymentSession {
 
 //        val mReactRootView = ReactRootView(context)
 
-        val packages = HyperPackageList(activity?.application, activity).packages
-        packages.add(ReactNativeHyperswitchPackage())
-        Log.i("called", "3")
+//        val packages = HyperPackageList(activity?.application, activity).packages
+//        packages.add(ReactNativeHyperswitchPackage())
+//        Log.i("called", "3")
 
         reactInstanceManager = ReactInstanceManager.builder()
           .setApplication(activity.application)
           .setCurrentActivity(activity)
-          .addPackages(packages)
+//          .addPackages(packages)
           .setBundleAssetName("hyperswitch.bundle")
           .setJSMainModulePath("index")
           .setJSBundleFile("assets://hyperswitch.bundle")
@@ -215,9 +214,9 @@ class PaymentSession {
 
         override fun getCustomerSavedPaymentMethodData(): Array<PaymentMethod> {
           val array = mutableListOf<PaymentMethod>()
-          for (i in 0 until getPaymentMethodDataArray.size()) {
-            array.add(parseGetPaymentMethodData(getPaymentMethodDataArray.getMap(i)))
-          }
+//          for (i in 0 until getPaymentMethodDataArray.size()) {
+//            array.add(parseGetPaymentMethodData(getPaymentMethodDataArray.getMap(i)))
+//          }
           return array.toTypedArray()
         }
 

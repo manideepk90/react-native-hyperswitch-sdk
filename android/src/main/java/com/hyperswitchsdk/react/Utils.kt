@@ -1,4 +1,4 @@
-package com.hyperswitchsdkreactnative.react
+package com.hyperswitchsdk.react
 import android.util.Log
 import android.content.Context
 import android.content.pm.ActivityInfo
@@ -8,15 +8,14 @@ import android.os.Bundle
 import android.view.WindowManager
 import android.webkit.WebSettings
 import androidx.appcompat.app.AppCompatActivity
-import com.hyperswitchsdkreactnative.R
 import java.util.Locale
 
 class Utils {
   companion object {
     @JvmStatic
-    lateinit var reactNativeFragmentCard: HyperswitchFragment
+    lateinit var reactNativeFragmentCard: ReactFragment
     @JvmStatic
-    var reactNativeFragmentSheet: HyperswitchFragment? = null
+    var reactNativeFragmentSheet: ReactFragment? = null
     @JvmStatic
     var lastRequest: Bundle? = null
     @JvmStatic
@@ -35,27 +34,81 @@ class Utils {
       id: Int?,
       isHidden: Boolean? = false
     ) {
-      Log.i("called", "2")
-
       context.runOnUiThread {
-        val transaction = context.supportFragmentManager.beginTransaction()
-        val userAgent = getUserAgent(context)
-        val ipAddress = getDeviceIPAddress(context)
-        context.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
-        if (message != "card" && message != "google_pay" && message != "paypal") {
-          flags = context.window.attributes.flags
-          if (message != "unifiedCheckout") {
-            context.window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            context.window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
-          } else {
-            context.window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            context.window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
-          }
+        try {
+          val userAgent = getUserAgent(context)
+          val ipAddress = getDeviceIPAddress(context)
+          context.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
 
-          if (reactNativeFragmentSheet == null) {
-            lastRequest = request
-            reactNativeFragmentSheet = HyperswitchFragment.Builder()
-              .setComponentName("hyperSwitch")
+          if (message != "card" && message != "google_pay" && message != "paypal") {
+            flags = context.window.attributes.flags
+            if (message != "unifiedCheckout") {
+              context.window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+              context.window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+            } else {
+              context.window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+              context.window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+            }
+
+            if (reactNativeFragmentSheet == null) {
+              lastRequest = request
+              reactNativeFragmentSheet = ReactFragment.Builder()
+                .setComponentName("ExampleApp")
+                .setLaunchOptions(
+                  getLaunchOptions(
+                    request,
+                    message,
+                    context.packageName,
+                    context.resources.configuration.locale.country,
+                    userAgent,
+                    ipAddress
+                  )
+                )
+                .build()
+              val transaction = context.supportFragmentManager.beginTransaction()
+              if (isHidden == true) {
+                transaction.hide(reactNativeFragmentSheet!!)
+              }
+              transaction.add(android.R.id.content, reactNativeFragmentSheet!!)
+                .commit()
+
+            } else if (areBundlesNotEqual(request, lastRequest)) {
+              // Remove existing fragment first
+              val removeTransaction = context.supportFragmentManager.beginTransaction()
+              removeTransaction.remove(reactNativeFragmentSheet!!)
+              removeTransaction.commitNowAllowingStateLoss()
+
+              lastRequest = request
+              reactNativeFragmentSheet = ReactFragment.Builder()
+                .setComponentName("ExampleApp")
+                .setLaunchOptions(
+                  getLaunchOptions(
+                    request,
+                    message,
+                    context.packageName,
+                    context.resources.configuration.locale.country,
+                    userAgent,
+                    ipAddress
+                  )
+                )
+
+                .build()
+              val addTransaction = context.supportFragmentManager.beginTransaction()
+              if (isHidden == true) {
+                addTransaction.hide(reactNativeFragmentSheet!!)
+              }
+              addTransaction.add(android.R.id.content, reactNativeFragmentSheet!!).commit()
+            } else {
+              if (isHidden == true) {
+                val transaction = context.supportFragmentManager.beginTransaction()
+                transaction.hide(reactNativeFragmentSheet!!)
+                transaction.commitAllowingStateLoss()
+              }
+            }
+          } else {
+            flags = 0
+            reactNativeFragmentCard = ReactFragment.Builder()
+              .setComponentName("ExampleApp")
               .setLaunchOptions(
                 getLaunchOptions(
                   request,
@@ -66,61 +119,23 @@ class Utils {
                   ipAddress
                 )
               )
-              //.setFabricEnabled(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED)
               .build()
 
-            if (isHidden == true)
-              transaction.hide(reactNativeFragmentSheet!!)
-
-            transaction.add(android.R.id.content, reactNativeFragmentSheet!!).commit()
-          } else if (areBundlesNotEqual(request, lastRequest)) {
-            lastRequest = request
-            reactNativeFragmentSheet = HyperswitchFragment.Builder()
-              .setComponentName("hyperSwitch")
-              .setLaunchOptions(
-                getLaunchOptions(
-                  request,
-                  message,
-                  context.packageName,
-                  context.resources.configuration.locale.country,
-                  userAgent,
-                  ipAddress
-                )
-              )
-              //.setFabricEnabled(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED)
-              .build()
-            if (isHidden == true)
-              transaction.hide(reactNativeFragmentSheet!!)
-            transaction.replace(android.R.id.content, reactNativeFragmentSheet!!).commit()
-          } else {
-
-            if (isHidden == true)
-              transaction.hide(reactNativeFragmentSheet!!)
-            transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom)
-              .show(reactNativeFragmentSheet!!).commit();
+            val transaction = context.supportFragmentManager.beginTransaction()
+            transaction.add(id ?: android.R.id.content, reactNativeFragmentCard).commit()
           }
-        } else {
-          flags = 0
-          reactNativeFragmentCard = HyperswitchFragment.Builder()
-            .setComponentName("hyperSwitch")
-            .setLaunchOptions(
-              getLaunchOptions(
-                request,
-                message,
-                context.packageName,
-                context.resources.configuration.locale.country,
-                userAgent,
-                ipAddress
-              )
-            )
-            //.setFabricEnabled(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED)
-            .build()
-          transaction.add(id ?: android.R.id.content, reactNativeFragmentCard).commit()
+
+          context.supportFragmentManager
+            .addFragmentOnAttachListener { _, _ ->
+              try {
+                context.savedStateRegistry.unregisterSavedStateProvider("android:support:fragments")
+              } catch (e: Exception) {
+                Log.w("HyperswitchSDK", "Failed to unregister saved state provider", e)
+              }
+            }
+        } catch (e: Exception) {
+          Log.e("HyperswitchSDK", "Error opening React view", e)
         }
-        context.supportFragmentManager
-          .addFragmentOnAttachListener { _, _ ->
-            context.savedStateRegistry.unregisterSavedStateProvider("android:support:fragments")
-          }
       }
     }
     fun openReactViewInBackground(
@@ -130,47 +145,36 @@ class Utils {
       id: Int?,
       isHidden: Boolean? = false
     ) {
-      // Initialize React context in the background
-//      reactInstanceManager!!.createReactContextInBackground()
-
-      // Run on UI thread if needed, although you are not manipulating UI here
       context.runOnUiThread {
-        val userAgent = getUserAgent(context)
-        val ipAddress = getDeviceIPAddress(context)
-        val launchOptions = getLaunchOptions(
-          request,
-          message,
-          context.packageName,
-          context.resources.configuration.locale.country,
-          userAgent,
-          ipAddress
-        )
+        try {
+          val userAgent = getUserAgent(context)
+          val ipAddress = getDeviceIPAddress(context)
+          val launchOptions = getLaunchOptions(
+            request,
+            message,
+            context.packageName,
+            context.resources.configuration.locale.country,
+            userAgent,
+            ipAddress
+          )
 
-        // Ensure the fragment is not added to the UI
-        if (reactNativeFragmentSheet == null) {
-          lastRequest = request
-          reactNativeFragmentSheet = HyperswitchFragment.Builder()
-            .setComponentName("hyperSwitch")
-            .setLaunchOptions(launchOptions)
-            .build()
+          if (reactNativeFragmentSheet == null) {
+            lastRequest = request
+            reactNativeFragmentSheet = ReactFragment.Builder()
+              .setComponentName("ExampleApp")
+              .setLaunchOptions(launchOptions)
+              .build()
+          } else if (areBundlesNotEqual(request, lastRequest)) {
+            lastRequest = request
+            reactNativeFragmentSheet = ReactFragment.Builder()
+              .setComponentName("ExampleApp")
+              .setLaunchOptions(launchOptions)
+              .build()
+          }
 
-          // Initialize the fragment without adding it to the UI
-          context.supportFragmentManager.beginTransaction()
-            .add(android.R.id.content, reactNativeFragmentSheet!!).commitNowAllowingStateLoss()
-          context.supportFragmentManager.beginTransaction()
-            .remove(reactNativeFragmentSheet!!).commitNowAllowingStateLoss()
-        } else if (areBundlesNotEqual(request, lastRequest)) {
-          lastRequest = request
-          reactNativeFragmentSheet = HyperswitchFragment.Builder()
-            .setComponentName("hyperSwitch")
-            .setLaunchOptions(launchOptions)
-            .build()
-
-          // Initialize the fragment without adding it to the UI
-          context.supportFragmentManager.beginTransaction()
-            .add(android.R.id.content, reactNativeFragmentSheet!!).commitNowAllowingStateLoss()
-          context.supportFragmentManager.beginTransaction()
-            .remove(reactNativeFragmentSheet!!).commitNowAllowingStateLoss()
+          Log.i("HyperswitchSDK", "Fragment prepared in background")
+        } catch (e: Exception) {
+          Log.e("HyperswitchSDK", "Error preparing React view in background", e)
         }
       }
     }
@@ -267,16 +271,24 @@ class Utils {
 
     // Get device IP address
     fun getDeviceIPAddress(context: Context): String {
-      val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-      val wifiInfo = wifiManager.connectionInfo
-      val ipAddress = wifiInfo.ipAddress
-      return String.format(
-        Locale.getDefault(), "%d.%d.%d.%d",
-        ipAddress and 0xff,
-        ipAddress shr 8 and 0xff,
-        ipAddress shr 16 and 0xff,
-        ipAddress shr 24 and 0xff
-      )
+      return try {
+        val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val wifiInfo = wifiManager.connectionInfo
+        val ipAddress = wifiInfo.ipAddress
+        String.format(
+          Locale.getDefault(), "%d.%d.%d.%d",
+          ipAddress and 0xff,
+          ipAddress shr 8 and 0xff,
+          ipAddress shr 16 and 0xff,
+          ipAddress shr 24 and 0xff
+        )
+      } catch (e: SecurityException) {
+        Log.w("HyperswitchSDK", "ACCESS_WIFI_STATE permission not granted, returning default IP")
+        "0.0.0.0"
+      } catch (e: Exception) {
+        Log.w("HyperswitchSDK", "Failed to get IP address: ${e.message}")
+        "0.0.0.0"
+      }
     }
   }
 }

@@ -1,4 +1,4 @@
-package io.hyperswitch.payments.paymentlauncher
+package com.hyperswitchsdk
 
 import android.content.Intent
 import android.os.Parcelable

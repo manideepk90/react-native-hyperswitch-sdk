@@ -1,40 +1,30 @@
-package com.hyperswitchsdkreactnative.react
+package com.hyperswitchsdk.react
 
 import android.annotation.TargetApi
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import com.facebook.hermes.reactexecutor.HermesExecutorFactory
-import com.facebook.react.HyperPackageList
-import com.facebook.react.ReactDelegate
+import com.facebook.react.*
 import com.facebook.react.ReactFragment
-import com.facebook.react.ReactInstanceManager
-import com.facebook.react.ReactRootView
 import com.facebook.react.common.LifecycleState
+import com.facebook.react.defaults.DefaultTurboModuleManagerDelegate
+import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
-import com.hyperswitchsdkreactnative.ReactNativeHyperswitchPackage
+import com.facebook.react.shell.MainReactPackage
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [HyperswitchFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 open class HyperswitchFragment : ReactFragment(),
   PermissionAwareActivity {
-  private var reactDelegate: ReactDelegate? = null
+  private var reactDelegate: com.facebook.react.ReactDelegate? = null
   private var mPermissionListener: PermissionListener? = null
-  // private var originalSoftInputMode: Int = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+  private var originalSoftInputMode: Int = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+  private var mReactInstanceManager: ReactInstanceManager? = null
+  private var mReactRootView: ReactRootView? = null
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     var mainComponentName: String? = null
@@ -45,94 +35,119 @@ open class HyperswitchFragment : ReactFragment(),
     }
     checkNotNull(mainComponentName) { "Cannot loadApp if component name is null" }
 
-    reactDelegate = ReactDelegate(
-      this.activity,
-      reactNativeHost, mainComponentName, launchOptions
-    )
+//    reactDelegate = ReactDelegate(
+//      this.activity,
+//      reactNativeHost, mainComponentName, launchOptions
+//    )
+    if (mReactInstanceManager == null) {
+      val packages = listOf<ReactPackage>(MainReactPackage())
+      mReactInstanceManager = ReactInstanceManager.builder()
+        .setApplication(activity?.application)
+        .setCurrentActivity(activity)
+        .addPackages(packages)
+        .setBundleAssetName("hyperswitch.bundle")
+        .setJavaScriptExecutorFactory(HermesExecutorFactory())
+        .setUseDeveloperSupport(false)
+        .setInitialLifecycleState(LifecycleState.BEFORE_CREATE)
+        .setReactPackageTurboModuleManagerDelegateBuilder(DefaultTurboModuleManagerDelegate.Builder())
+        .build()
+    }
+
   }
+
+
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
+    try {
+      if (mReactRootView == null) {
+        mReactRootView = ReactRootView(context)
+//
+//        val packages = listOf<ReactPackage>(MainReactPackage())
 
-    val mReactRootView = ReactRootView(context)
+//        mReactInstanceManager = ReactInstanceManager.builder()
+//          .setApplication(activity?.application)
+//          .setCurrentActivity(activity)
+//          .addPackages(packages)
+//          .setBundleAssetName("hyperswitch.bundle")
+//          .setJavaScriptExecutorFactory(HermesExecutorFactory())
+//          .setUseDeveloperSupport(false)
+//          .setInitialLifecycleState(LifecycleState.BEFORE_CREATE)
+//          .setReactPackageTurboModuleManagerDelegateBuilder(DefaultTurboModuleManagerDelegate.Builder())
+//          .build()
 
-    val packages = HyperPackageList(activity?.application, context).packages
-    packages.add(ReactNativeHyperswitchPackage())
+        var mainComponentName: String? = null
+        var launchOptions: Bundle? = null
+        if (this.arguments != null) {
+          mainComponentName = this.requireArguments().getString("arg_component_name")
+          launchOptions = this.requireArguments().getBundle("arg_launch_options")
+        }
+        checkNotNull(mainComponentName) { "Cannot loadApp if component name is null" }
 
-    val mReactInstanceManager = ReactInstanceManager.builder()
-      .setApplication(activity?.application)
-      .setCurrentActivity(activity)
-      .addPackages(packages)
-      .setBundleAssetName("hyperswitch.bundle")
-      .setJSMainModulePath("index")
-      .setJSBundleFile("assets://hyperswitch.bundle")
-      .setJavaScriptExecutorFactory(HermesExecutorFactory())
-      .setUseDeveloperSupport(false)
-      .setInitialLifecycleState(LifecycleState.RESUMED)
-      .build()
+        mReactRootView?.startReactApplication(mReactInstanceManager!!, mainComponentName, launchOptions)
+      }
 
-    var mainComponentName: String? = null
-    var launchOptions: Bundle? = null
-    if (this.arguments != null) {
-      mainComponentName = this.requireArguments().getString("arg_component_name")
-      launchOptions = this.requireArguments().getBundle("arg_launch_options")
-      Log.i("called", launchOptions.toString())
+      originalSoftInputMode = activity?.window?.attributes?.softInputMode ?: WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+      setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+      return mReactRootView
+    } catch (e: Exception) {
+      e.printStackTrace()
+      // Return empty view if RN instance fails to start
+      return View(context)
     }
-    checkNotNull(mainComponentName) { "Cannot loadApp if component name is null" }
-    mReactRootView.startReactApplication(mReactInstanceManager, mainComponentName, launchOptions)
-
-    // originalSoftInputMode = activity?.window?.attributes?.softInputMode ?: WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
-    // setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
-    return mReactRootView
   }
 
   private fun setSoftInputMode(inputMode: Int) {
-    // if(originalSoftInputMode != WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+    if(originalSoftInputMode != WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
       activity?.window?.setSoftInputMode(inputMode)
   }
 
   override fun onResume() {
     super.onResume()
-    reactDelegate!!.onHostResume()
-    // setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+    mReactInstanceManager?.onHostResume(activity, activity as DefaultHardwareBackBtnHandler?)
+    setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
   }
 
   override fun onPause() {
     super.onPause()
-    reactDelegate!!.onHostPause()
-    // setSoftInputMode(originalSoftInputMode)
+    mReactInstanceManager?.onHostPause()
+    setSoftInputMode(originalSoftInputMode)
   }
 
   override fun onDestroy() {
     super.onDestroy()
-    reactDelegate!!.onHostDestroy()
-    // setSoftInputMode(originalSoftInputMode)
+    mReactInstanceManager?.onHostDestroy()
+    mReactRootView?.unmountReactApplication()
+    mReactInstanceManager = null
+    mReactRootView = null
+    setSoftInputMode(originalSoftInputMode)
   }
 
   override fun onHiddenChanged(hidden: Boolean) {
     super.onHiddenChanged(hidden)
 
     if (hidden) {
-      // setSoftInputMode(originalSoftInputMode)
+      setSoftInputMode(originalSoftInputMode)
     } else {
-      // setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+      setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     super.onActivityResult(requestCode, resultCode, data)
-    reactDelegate!!.onActivityResult(requestCode, resultCode, data, false)
+    mReactInstanceManager?.onActivityResult(activity, requestCode, resultCode, data)
   }
 
   override fun onBackPressed(): Boolean {
-    return reactDelegate!!.onBackPressed()
+    return (mReactInstanceManager?.onBackPressed() ?: false) as Boolean
   }
 
   override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-    return reactDelegate!!.shouldShowDevMenuOrReload(keyCode, event)
+    // Since dev support is disabled, no need to handle dev menu
+    return false
   }
 
   override fun onRequestPermissionsResult(
@@ -164,26 +179,26 @@ open class HyperswitchFragment : ReactFragment(),
   override fun requestPermissions(
     permissions: Array<String>,
     requestCode: Int,
-    listener: PermissionListener
+    listener: PermissionListener?
   ) {
     mPermissionListener = listener
     this.requestPermissions(permissions, requestCode)
   }
 
-  class Builder: ReactFragment.Builder() {
+  class Builder {
     private lateinit var mComponentName: String
     private lateinit var mLaunchOptions: Bundle
-    override fun setComponentName(componentName: String): Builder {
+    fun setComponentName(componentName: String): Builder {
       mComponentName = componentName
       return this
     }
 
-    override fun setLaunchOptions(launchOptions: Bundle): Builder {
+    fun setLaunchOptions(launchOptions: Bundle): Builder {
       mLaunchOptions = launchOptions
       return this
     }
 
-    override fun build(): HyperswitchFragment {
+    fun build(): HyperswitchFragment {
       return newInstance(
         mComponentName,
         mLaunchOptions

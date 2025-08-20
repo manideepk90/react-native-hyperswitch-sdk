@@ -5,14 +5,13 @@ import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
-import java.util.HashMap
 
 class HyperswitchSdkPackage : BaseReactPackage() {
   override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
-    return if (name == HyperswitchSdkModule.NAME) {
-      HyperswitchSdkModule(reactContext)
-    } else {
-      null
+    return when (name) {
+      HyperswitchSdkModule.NAME -> HyperswitchSdkModule(reactContext)
+      HyperModulesModule.NAME -> HyperModulesModule(reactContext)
+      else -> null
     }
   }
 
@@ -22,6 +21,14 @@ class HyperswitchSdkPackage : BaseReactPackage() {
       moduleInfos[HyperswitchSdkModule.NAME] = ReactModuleInfo(
         HyperswitchSdkModule.NAME,
         HyperswitchSdkModule.NAME,
+        false,  // canOverrideExistingModule
+        false,  // needsEagerInit
+        false,  // isCxxModule
+        true // isTurboModule
+      )
+      moduleInfos[HyperModulesModule.NAME] = ReactModuleInfo(
+        HyperModulesModule.NAME,
+        HyperModulesModule.NAME,
         false,  // canOverrideExistingModule
         false,  // needsEagerInit
         false,  // isCxxModule
