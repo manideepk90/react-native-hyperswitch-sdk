@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-  
+
   <application>
     <meta-data android:name="com.google.android.gms.wallet.api.enabled" android:value="true" />
     <activity
@@ -16,5 +16,6 @@
         <data android:scheme="${applicationId}.hyperswitch" />
       </intent-filter>
     </activity>
+    <activity android:name=".SecondReactActivity" />
   </application>
 </manifest>

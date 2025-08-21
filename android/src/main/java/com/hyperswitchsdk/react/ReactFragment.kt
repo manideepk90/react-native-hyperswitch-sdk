@@ -16,11 +16,17 @@ import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
+import com.facebook.react.bridge.JSBundleLoader
+import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.defaults.DefaultReactHost
+import com.facebook.react.defaults.DefaultReactHostDelegate
 import com.facebook.react.defaults.DefaultReactNativeHost
+import com.facebook.react.defaults.DefaultTurboModuleManagerDelegate
+import com.facebook.react.fabric.ComponentFactory
 import com.facebook.react.internal.featureflags.ReactNativeFeatureFlags.enableBridgelessArchitecture
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
+import com.facebook.react.runtime.ReactHostImpl
 import com.facebook.react.runtime.hermes.HermesInstance
 import com.facebook.react.shell.MainReactPackage
 import com.hyperswitchsdk.HyperswitchSdkPackage
@@ -37,18 +43,17 @@ class ReactFragment : Fragment(), PermissionAwareActivity {
     var launchOptions: Bundle? = null
     var fabricEnabled: Boolean? = null
 
-      mainComponentName = this.requireArguments().getString("arg_component_name")
-      launchOptions = this.requireArguments().getBundle("arg_launch_options")
-      fabricEnabled = true
-      this.mDisableHostLifecycleEvents =
-        this.requireArguments().getBoolean("arg_disable_host_lifecycle_events")
+    mainComponentName = this.requireArguments().getString("arg_component_name")
+    launchOptions = this.requireArguments().getBundle("arg_launch_options")
+    fabricEnabled = false
+    this.mDisableHostLifecycleEvents =
+      this.requireArguments().getBoolean("arg_disable_host_lifecycle_events")
 
 
     checkNotNull(mainComponentName != null) { "Cannot loadApp if component name is null" }
     if (enableBridgelessArchitecture()) {
-      Log.i(
-       "Called Data", "Came here"
-      )
+      Log.i("ReactFragment", "Using New Architecture (Bridgeless) for component: $mainComponentName")
+      Log.i("ReactFragment", "Launch options: ${launchOptions?.keySet()?.joinToString(", ") ?: "null"}")
       this.mReactDelegate = ReactDelegate(
         this.requireActivity(),
         this.reactHost, mainComponentName!!, launchOptions
@@ -63,55 +68,95 @@ class ReactFragment : Fragment(), PermissionAwareActivity {
 
   protected val reactNativeHost: ReactNativeHost?
     get() {
-//      val application = this.requireActivity().getApplication() as ReactApplication?
-//      return if (application != null) application.reactNativeHost else null
       val reactNativeHost: ReactNativeHost =
         object : DefaultReactNativeHost(requireActivity().application) {
-          override fun getPackages(): List<ReactPackage> = listOf<ReactPackage>(MainReactPackage())
+          override fun getPackages(): List<ReactPackage> = listOf( MainReactPackage(null))
 //            PackageList(this).packages.apply {
 //              // Packages that cannot be autolinked yet can be added manually here, for example:
 //              add(HyperswitchSdkPackage())
 //            }
 
 
-
           override fun getJSBundleFile(): String? {
             return "assets://hyperswitch.bundle"
+          }
+
+          override fun getBundleAssetName(): String? {
+            return "hyperswitch.bundle"
           }
 
           override fun getJSMainModuleName(): String = "index"
 
           override fun getUseDeveloperSupport(): Boolean {
-            return false // Disable Metro server
+            return false
           }
 
           override val isNewArchEnabled: Boolean = true//BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
-          override val isHermesEnabled: Boolean = false//BuildConfig.IS_HERMES_ENABLED
+          override val isHermesEnabled: Boolean = true//BuildConfig.IS_HERMES_ENABLED
         }
 
       return reactNativeHost
     }
 
+  @OptIn(UnstableReactNativeAPI::class)
   protected val reactHost: ReactHost?
     get() {
       val application = requireActivity().application
 
       val packages: List<ReactPackage> = listOf(
-          MainReactPackage(),
-          HyperswitchSdkPackage() // Included as it was commented in your original code
+        MainReactPackage(),
+//        HyperswitchSdkPackage()
+      )
+      val bundleLoader = JSBundleLoader.createAssetLoader(requireContext(), "hyperswitch.bundle", false)
+      val defaultReactHostDelegate = DefaultReactHostDelegate(
+        jsMainModulePath = "index2",
+        jsBundleLoader = bundleLoader,
+        reactPackages = packages,
+        jsRuntimeFactory = HermesInstance(),
+        bindingsInstaller = null,
+        exceptionHandler = { exception ->
+          Log.e("ReactHost", "React Native exception: ${exception.message}", exception)
+          Log.e("ReactHost", "Stack trace: ${exception.stackTrace.joinToString("\n")}")
+          Log.e("ReactHost", "Bundle loading failed - check if hyperswitch.bundle exists and contains hyperSwitch component")
+          Log.e("ReactHost", "Exception type: ${exception.javaClass.simpleName}")
+        },
+        turboModuleManagerDelegateBuilder = DefaultTurboModuleManagerDelegate.Builder()
       )
 
+      // Try-catch around ReactHost creation to handle ComponentFactory issues
+      val reactHost = try {
+        Log.i("ReactHost", "Creating ReactHostImpl with New Architecture")
+        ReactHostImpl(
+          requireContext(),
+          defaultReactHostDelegate,
+          ComponentFactory(),
+          false, // Disable dev support for production bundle
+          false // Disable lazy view managers initialization
+        )
+      } catch (e: Exception) {
+        Log.e("ReactHost", "Failed to create ReactHostImpl: ${e.message}", e)
+        // Fallback: try with different parameters
+        Log.i("ReactHost", "Attempting fallback ReactHostImpl configuration")
+        ReactHostImpl(
+          requireContext(),
+          defaultReactHostDelegate,
+          ComponentFactory(),
+          false,
+          true // Try with lazy view managers enabled
+        )
+      }
+
       // DefaultReactHost is instantiated directly with its configuration.
-      val reactHost = DefaultReactHost.getDefaultReactHost(
-        context = application,
-        packageList = packages,
-        jsMainModulePath = "index", // Your JS module name
-        jsBundleAssetPath = "hyperswitch.bundle", // Bundle asset path
-        jsBundleFilePath = "assets://hyperswitch.bundle", // Optional file path
-        jsRuntimeFactory = HermesInstance(), // Hermes enabled
-        useDevSupport = false, // Dev support disabled
-        cxxReactPackageProviders = emptyList()
-      )
+//      val reactHost = DefaultReactHost.getDefaultReactHost(
+//        context = application,
+//        packageList = packages,
+//        jsMainModulePath = "index", // Your JS module name
+//        jsBundleAssetPath = "assets://hyperswitch.bundle", // Bundle asset path
+//        jsBundleFilePath = "assets://hyperswitch.bundle", // Optional file path
+//        jsRuntimeFactory = HermesInstance(), // Hermes enabled
+//        useDevSupport = false,
+//        cxxReactPackageProviders = emptyList()
+//      )
       return reactHost
     }
 

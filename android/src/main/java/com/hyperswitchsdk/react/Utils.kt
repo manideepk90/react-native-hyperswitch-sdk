@@ -1,6 +1,8 @@
 package com.hyperswitchsdk.react
+import android.app.Activity
 import android.util.Log
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.wifi.WifiManager
 import android.os.Build
@@ -8,14 +10,16 @@ import android.os.Bundle
 import android.view.WindowManager
 import android.webkit.WebSettings
 import androidx.appcompat.app.AppCompatActivity
+import com.hyperswitchsdk.SecondReactActivity
 import java.util.Locale
 
 class Utils {
   companion object {
     @JvmStatic
-    lateinit var reactNativeFragmentCard: ReactFragment
+    lateinit var reactNativeFragmentCard: HyperswitchFragment
+
     @JvmStatic
-    var reactNativeFragmentSheet: ReactFragment? = null
+    var reactNativeFragmentSheet: HyperswitchFragment? = null
     @JvmStatic
     var lastRequest: Bundle? = null
     @JvmStatic
@@ -34,6 +38,14 @@ class Utils {
       id: Int?,
       isHidden: Boolean? = false
     ) {
+//      val currentActivity: Activity? = context
+//      currentActivity?.let {
+//        val intent = Intent(it, SecondReactActivity::class.java)
+//        it.startActivity(intent)
+//      }
+      Log.i("HyperswitchSDK", "openReactView called with message: $message, component: hyperSwitch")
+      Log.i("HyperswitchSDK", "Bundle contents: ${request.keySet().joinToString(", ")}")
+
       context.runOnUiThread {
         try {
           val userAgent = getUserAgent(context)
@@ -52,8 +64,8 @@ class Utils {
 
             if (reactNativeFragmentSheet == null) {
               lastRequest = request
-              reactNativeFragmentSheet = ReactFragment.Builder()
-                .setComponentName("ExampleApp")
+              reactNativeFragmentSheet = HyperswitchFragment.Builder()
+                .setComponentName("hyperSwitch")
                 .setLaunchOptions(
                   getLaunchOptions(
                     request,
@@ -64,6 +76,7 @@ class Utils {
                     ipAddress
                   )
                 )
+//                .setFabricEnabled(fabricEnabled = true)
                 .build()
               val transaction = context.supportFragmentManager.beginTransaction()
               if (isHidden == true) {
@@ -79,8 +92,8 @@ class Utils {
               removeTransaction.commitNowAllowingStateLoss()
 
               lastRequest = request
-              reactNativeFragmentSheet = ReactFragment.Builder()
-                .setComponentName("ExampleApp")
+              reactNativeFragmentSheet = HyperswitchFragment.Builder()
+                .setComponentName("hyperSwitch")
                 .setLaunchOptions(
                   getLaunchOptions(
                     request,
@@ -107,8 +120,8 @@ class Utils {
             }
           } else {
             flags = 0
-            reactNativeFragmentCard = ReactFragment.Builder()
-              .setComponentName("ExampleApp")
+            reactNativeFragmentCard = HyperswitchFragment.Builder()
+              .setComponentName("hyperSwitch")
               .setLaunchOptions(
                 getLaunchOptions(
                   request,
@@ -160,14 +173,14 @@ class Utils {
 
           if (reactNativeFragmentSheet == null) {
             lastRequest = request
-            reactNativeFragmentSheet = ReactFragment.Builder()
-              .setComponentName("ExampleApp")
+            reactNativeFragmentSheet = HyperswitchFragment.Builder()
+              .setComponentName("hyperSwitch")
               .setLaunchOptions(launchOptions)
               .build()
           } else if (areBundlesNotEqual(request, lastRequest)) {
             lastRequest = request
-            reactNativeFragmentSheet = ReactFragment.Builder()
-              .setComponentName("ExampleApp")
+            reactNativeFragmentSheet = HyperswitchFragment.Builder()
+              .setComponentName("hyperSwitch")
               .setLaunchOptions(launchOptions)
               .build()
           }
@@ -217,6 +230,7 @@ class Utils {
       ipAddress : String
     ): Bundle {
       request.putString("type", message)
+      request.putString("rootTag","1")
       val hyperParams = Bundle()
       Log.i("Package Name---->", packageName)
       hyperParams.putString("appId", packageName)

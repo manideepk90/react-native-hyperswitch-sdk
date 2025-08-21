@@ -8,7 +8,9 @@
     "start": "react-native start",
     "build:android": "react-native build-android --extra-params \"--no-daemon --console=plain -PreactNativeArchitectures=arm64-v8a\"",
     "build:ios": "react-native build-ios --mode Debug",
-    "server": "node server.js"
+    "server": "node server.js",
+    "bundle:android": "react-native bundle  --reset-cache --platform android --dev false --entry-file index2.js --bundle-output ../android/src/main/assets/hyperswitch.bundle"
+
   },
   "dependencies": {
     "cors": "^2.8.5",

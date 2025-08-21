@@ -5,6 +5,8 @@ import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
+import com.facebook.react.shell.MainReactPackage
+import com.facebook.react.uimanager.ViewManager // Import ViewManager
 
 class HyperswitchSdkPackage : BaseReactPackage() {
   override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
@@ -36,5 +38,15 @@ class HyperswitchSdkPackage : BaseReactPackage() {
       )
       moduleInfos
     }
+  }
+
+  // Add the createViewManagers method
+  override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
+    // Replace HyperswitchViewManager() with your actual ViewManager instance(s)
+    // If you have multiple ViewManagers, add them to this list.
+    // For example: return listOf(HyperswitchViewManager(), AnotherViewManager())
+    // If you don't have a HyperswitchViewManager yet, you'll need to create one.
+    // If you don't have any ViewManagers currently, return an empty list:
+    return emptyList<ViewManager<*, *>>()
   }
 }
