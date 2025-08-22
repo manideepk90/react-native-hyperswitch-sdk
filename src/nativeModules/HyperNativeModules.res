@@ -1,12 +1,22 @@
-// Import common types
-open HyperCommonTypes
+// JSON parser utility
+external parser: HyperTypes.sessionParams => Js.Json.t = "%identity"
 
-// Re-export types for external usage
+// Type definitions extracted from HyperHooks
 @genType
-type confirmPaymentMethodArgumentType = HyperCommonTypes.confirmPaymentMethodArgumentType
+type confirmPaymentMethodArgumentType = {
+  sessionParams: HyperTypes.sessionParams,
+  cvc?: string,
+}
 
-@genType  
-type confirmWithCustomerPaymentTokenArgumentType = HyperCommonTypes.confirmWithCustomerPaymentTokenArgumentType
+@genType
+type confirmWithCustomerPaymentTokenArgumentType = {
+  sessionParams: HyperTypes.sessionParams,
+  cvc?: string,
+  paymentToken: string,
+}
+
+// Native module callback types
+type jsonFunWithCallback = (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit
 type strFunWithCallback = (Js.Json.t, option<string>, Js.Dict.t<Js.Json.t> => unit) => unit
 type strFun2WithCallback = (Js.Json.t, option<string>, string, Js.Dict.t<Js.Json.t> => unit) => unit
 external jsonToJsonFunWithCallback: Js.Json.t => jsonFunWithCallback = "%identity"

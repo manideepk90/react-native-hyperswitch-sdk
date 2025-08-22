@@ -3,10 +3,12 @@
 /* eslint-disable */
 /* tslint:disable */
 
-import type {confirmPaymentMethodArgumentType as HyperCommonTypes_confirmPaymentMethodArgumentType} from '../../src/types/HyperCommonTypes.gen';
+import type {sessionParams as HyperTypes_sessionParams} from '../../src/types/HyperTypes.gen';
 
-import type {confirmWithCustomerPaymentTokenArgumentType as HyperCommonTypes_confirmWithCustomerPaymentTokenArgumentType} from '../../src/types/HyperCommonTypes.gen';
+export type confirmPaymentMethodArgumentType = { readonly sessionParams: HyperTypes_sessionParams; readonly cvc?: string };
 
-export type confirmPaymentMethodArgumentType = HyperCommonTypes_confirmPaymentMethodArgumentType;
-
-export type confirmWithCustomerPaymentTokenArgumentType = HyperCommonTypes_confirmWithCustomerPaymentTokenArgumentType;
+export type confirmWithCustomerPaymentTokenArgumentType = {
+  readonly sessionParams: HyperTypes_sessionParams; 
+  readonly cvc?: string; 
+  readonly paymentToken: string
+};

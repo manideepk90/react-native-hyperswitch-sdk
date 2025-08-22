@@ -10,14 +10,20 @@
     "build:ios": "react-native build-ios --mode Debug",
     "server": "node server.js",
     "bundle:android": "react-native bundle  --reset-cache --platform android --dev false --entry-file index2.js --bundle-output ../android/src/main/assets/hyperswitch.bundle"
-
   },
   "dependencies": {
+    "@sentry/react-native": "^6.20.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "react": "19.0.0",
-    "react-native": "0.79.2"
+    "react-native": "0.79.2",
+    "react-native-gesture-handler": "^2.28.0",
+    "react-native-inappbrowser-reborn": "^3.7.0",
+    "react-native-pager-view": "^6.9.1",
+    "react-native-safe-area-context": "^5.6.1",
+    "react-native-screens": "^4.15.2",
+    "react-native-svg": "^15.12.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

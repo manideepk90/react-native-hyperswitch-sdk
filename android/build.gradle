@@ -25,6 +25,11 @@ apply plugin: "kotlin-parcelize"
 
 apply plugin: "com.facebook.react"
 
+apply from: "dependency-setup.gradle"
+
+ext.hyperDependencies = initializeHyperswitchDependencies()
+
+
 
 def getExtOrIntegerDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties["HyperswitchSdk_" + name]).toInteger()
@@ -81,4 +86,10 @@ def kotlin_version = getExtOrDefault("kotlinVersion")
 dependencies {
   implementation "com.facebook.react:react-android"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  // Hyperswitch dependencies which will be added dynamically
+  if (project.ext.has('hyperDependencies')) {
+    project.ext.hyperDependencies.each { dep ->
+      implementation project(":${dep}")
+    }
+  }
 }
