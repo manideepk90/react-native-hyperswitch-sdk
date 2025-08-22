@@ -10,20 +10,31 @@ import android.os.Bundle
 import android.view.WindowManager
 import android.webkit.WebSettings
 import androidx.appcompat.app.AppCompatActivity
+import com.hyperswitchreactnative.react.ReactFragment
+
 import com.hyperswitchsdk.SecondReactActivity
+import com.hyperswitchsdk.react.Utils.Companion.reactNativeFragmentSheet
 import java.util.Locale
 
 class Utils {
   companion object {
     @JvmStatic
-    lateinit var reactNativeFragmentCard: HyperswitchFragment
+    lateinit var reactNativeFragmentCard: ReactFragment
 
     @JvmStatic
-    var reactNativeFragmentSheet: HyperswitchFragment? = null
+    var reactNativeFragmentSheet: ReactFragment? = null
     @JvmStatic
     var lastRequest: Bundle? = null
     @JvmStatic
     var flags: Int = 0
+
+    // Instance management for isolated RN instances
+    @JvmStatic
+    private val runningInstances = mutableMapOf<String, HyperswitchFragment>()
+    @JvmStatic
+    private val instanceBundles = mutableMapOf<String, String>()
+    @JvmStatic
+    private val preloadedBundles = mutableMapOf<String, Boolean>()
 
     /**
      *
@@ -64,7 +75,7 @@ class Utils {
 
             if (reactNativeFragmentSheet == null) {
               lastRequest = request
-              reactNativeFragmentSheet = HyperswitchFragment.Builder()
+              reactNativeFragmentSheet = ReactFragment.Builder()
                 .setComponentName("hyperSwitch")
                 .setLaunchOptions(
                   getLaunchOptions(
@@ -86,13 +97,20 @@ class Utils {
                 .commit()
 
             } else if (areBundlesNotEqual(request, lastRequest)) {
-              // Remove existing fragment first
-              val removeTransaction = context.supportFragmentManager.beginTransaction()
-              removeTransaction.remove(reactNativeFragmentSheet!!)
-              removeTransaction.commitNowAllowingStateLoss()
+              // Properly cleanup existing fragment
+              reactNativeFragmentSheet?.let { fragment ->
+                // Call lifecycle cleanup before removing
+                if (fragment.isAdded) {
+                  val removeTransaction = context.supportFragmentManager.beginTransaction()
+                  removeTransaction.remove(fragment)
+                  removeTransaction.commitNowAllowingStateLoss()
+                  // Wait for fragment removal to complete
+                  context.supportFragmentManager.executePendingTransactions()
+                }
+              }
 
               lastRequest = request
-              reactNativeFragmentSheet = HyperswitchFragment.Builder()
+              reactNativeFragmentSheet = ReactFragment.Builder()
                 .setComponentName("hyperSwitch")
                 .setLaunchOptions(
                   getLaunchOptions(
@@ -104,7 +122,6 @@ class Utils {
                     ipAddress
                   )
                 )
-
                 .build()
               val addTransaction = context.supportFragmentManager.beginTransaction()
               if (isHidden == true) {
@@ -120,7 +137,7 @@ class Utils {
             }
           } else {
             flags = 0
-            reactNativeFragmentCard = HyperswitchFragment.Builder()
+            reactNativeFragmentCard = ReactFragment.Builder()
               .setComponentName("hyperSwitch")
               .setLaunchOptions(
                 getLaunchOptions(
@@ -173,13 +190,13 @@ class Utils {
 
           if (reactNativeFragmentSheet == null) {
             lastRequest = request
-            reactNativeFragmentSheet = HyperswitchFragment.Builder()
+            reactNativeFragmentSheet = ReactFragment.Builder()
               .setComponentName("hyperSwitch")
               .setLaunchOptions(launchOptions)
               .build()
           } else if (areBundlesNotEqual(request, lastRequest)) {
             lastRequest = request
-            reactNativeFragmentSheet = HyperswitchFragment.Builder()
+            reactNativeFragmentSheet = ReactFragment.Builder()
               .setComponentName("hyperSwitch")
               .setLaunchOptions(launchOptions)
               .build()

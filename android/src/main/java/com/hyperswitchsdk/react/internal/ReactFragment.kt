@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package com.hyperswitchreactnative.react
+package com.hyperswitchreactnative.internal
 
 import android.app.Activity
 import android.content.Intent
@@ -23,9 +23,7 @@ import com.facebook.react.internal.featureflags.ReactNativeFeatureFlags
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
 import com.facebook.react.shell.MainReactPackage
-import com.hyperswitchreactnative.internal.DefaultReactHost
-import com.hyperswitchreactnative.internal.DefaultReactNativeHost
-import com.hyperswitchreactnative.internal.ReactDelegate
+import com.hyperswitchreactnative.internal.DefaultReactHost.getDefaultReactHost
 
 /**
  * Fragment for creating a React View. This allows the developer to "embed" a React Application
@@ -51,18 +49,18 @@ open class ReactFragment : Fragment(), PermissionAwareActivity {
     checkNotNull(mainComponentName) { "Cannot loadApp if component name is null" }
 
     reactDelegate =
-      if (ReactNativeFeatureFlags.enableBridgelessArchitecture()) {
-        ReactDelegate(requireActivity(), reactHost, mainComponentName, launchOptions)
-      } else {
-        @Suppress("DEPRECATION")
-        (ReactDelegate(
-          requireActivity(),
-          reactNativeHost,
-          mainComponentName,
-          launchOptions,
-          fabricEnabled,
-        ))
-      }
+        if (ReactNativeFeatureFlags.enableBridgelessArchitecture()) {
+          ReactDelegate(requireActivity(), reactHost, mainComponentName, launchOptions)
+        } else {
+          @Suppress("DEPRECATION")
+          (ReactDelegate(
+        requireActivity(),
+        reactNativeHost,
+        mainComponentName,
+        launchOptions,
+        fabricEnabled,
+    ))
+        }
   }
 
   /**
@@ -73,8 +71,8 @@ open class ReactFragment : Fragment(), PermissionAwareActivity {
    */
   @Suppress("DEPRECATION")
   @Deprecated(
-    "You should not use ReactNativeHost directly in the New Architecture. Use ReactHost instead.",
-    ReplaceWith("reactHost"),
+      "You should not use ReactNativeHost directly in the New Architecture. Use ReactHost instead.",
+      ReplaceWith("reactHost"),
   )
   protected open val reactNativeHost: ReactNativeHost?
     get() = // (activity?.application as ReactApplication?)?.reactNativeHost
@@ -102,25 +100,13 @@ open class ReactFragment : Fragment(), PermissionAwareActivity {
    * a Bridgeless-only concept.
    */
   protected open val reactHost: ReactHost?
-    get() =
-//      (activity?.application as ReactApplication?)?.reactHost
-//      getDefaultReactHost(requireContext(), reactNativeHost!!)
-
-      DefaultReactHost.getDefaultReactHost(
-        requireContext(),
-        listOf(MainReactPackage()),
-        "index",
-        "hyperswitch.bundle",
-        null,
-        null,
-        false,
-        emptyList(),
-      )
+    get() = //(activity?.application as ReactApplication?)?.reactHost
+      getDefaultReactHost(requireContext(), reactNativeHost!!)
 
   override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?,
+      inflater: LayoutInflater,
+      container: ViewGroup?,
+      savedInstanceState: Bundle?,
   ): View? {
     reactDelegate.loadApp()
     return reactDelegate.reactRootView
@@ -173,13 +159,13 @@ open class ReactFragment : Fragment(), PermissionAwareActivity {
    * @return true if we handled onKeyUp
    */
   open fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean =
-    reactDelegate.shouldShowDevMenuOrReload(keyCode, event)
+      reactDelegate.shouldShowDevMenuOrReload(keyCode, event)
 
   @Deprecated("Deprecated in Java")
   override fun onRequestPermissionsResult(
-    requestCode: Int,
-    permissions: Array<String>,
-    grantResults: IntArray,
+      requestCode: Int,
+      permissions: Array<String>,
+      grantResults: IntArray,
   ) {
     @Suppress("DEPRECATION")
     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -191,16 +177,16 @@ open class ReactFragment : Fragment(), PermissionAwareActivity {
   }
 
   override fun checkPermission(permission: String, pid: Int, uid: Int): Int =
-    activity?.checkPermission(permission, pid, uid) ?: 0
+      activity?.checkPermission(permission, pid, uid) ?: 0
 
   override fun checkSelfPermission(permission: String): Int =
-    activity?.checkSelfPermission(permission) ?: 0
+      activity?.checkSelfPermission(permission) ?: 0
 
   @Suppress("DEPRECATION")
   override fun requestPermissions(
-    permissions: Array<String>,
-    requestCode: Int,
-    listener: PermissionListener?,
+      permissions: Array<String>,
+      requestCode: Int,
+      listener: PermissionListener?,
   ) {
     permissionListener = listener
     requestPermissions(permissions, requestCode)
@@ -237,7 +223,7 @@ open class ReactFragment : Fragment(), PermissionAwareActivity {
     fun build(): ReactFragment = newInstance(componentName, launchOptions, fabricEnabled)
 
     @Deprecated(
-      "You should not change call ReactFragment.setFabricEnabled. Instead enable the NewArchitecture for the whole application with newArchEnabled=true in your gradle.properties file")
+        "You should not change call ReactFragment.setFabricEnabled. Instead enable the NewArchitecture for the whole application with newArchEnabled=true in your gradle.properties file")
     fun setFabricEnabled(fabricEnabled: Boolean): Builder {
       this.fabricEnabled = fabricEnabled
       return this
@@ -245,14 +231,16 @@ open class ReactFragment : Fragment(), PermissionAwareActivity {
   }
 
   companion object {
+
     protected const val ARG_COMPONENT_NAME: String = "arg_component_name"
+
     protected const val ARG_LAUNCH_OPTIONS: String = "arg_launch_options"
     protected const val ARG_FABRIC_ENABLED: String = "arg_fabric_enabled"
 
     @Deprecated(
-      "We will remove this and use a different solution for handling Fragment lifecycle events.")
+        "We will remove this and use a different solution for handling Fragment lifecycle events.")
     protected const val ARG_DISABLE_HOST_LIFECYCLE_EVENTS: String =
-      "arg_disable_host_lifecycle_events"
+        "arg_disable_host_lifecycle_events"
 
     /**
      * @param componentName The name of the react native component
@@ -261,16 +249,16 @@ open class ReactFragment : Fragment(), PermissionAwareActivity {
      * @return A new instance of fragment ReactFragment.
      */
     private fun newInstance(
-      componentName: String?,
-      launchOptions: Bundle?,
-      fabricEnabled: Boolean,
+        componentName: String?,
+        launchOptions: Bundle?,
+        fabricEnabled: Boolean,
     ): ReactFragment {
       val args =
-        Bundle().apply {
-          putString(ARG_COMPONENT_NAME, componentName)
-          putBundle(ARG_LAUNCH_OPTIONS, launchOptions)
-          putBoolean(ARG_FABRIC_ENABLED, fabricEnabled)
-        }
+          Bundle().apply {
+            putString(ARG_COMPONENT_NAME, componentName)
+            putBundle(ARG_LAUNCH_OPTIONS, launchOptions)
+            putBoolean(ARG_FABRIC_ENABLED, fabricEnabled)
+          }
       return ReactFragment().apply { setArguments(args) }
     }
   }
