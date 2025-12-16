@@ -59,7 +59,7 @@ export default Repack.defineRspackConfig((env) => {
                   )
                 : path.resolve(
                     __dirname,
-                    'react-native-lib-demo/ios/Resources'
+                    'react-native-lib-demo/ios/resources'
                 ),
           },
           {

@@ -17,7 +17,7 @@ end
 target 'RNHyperSwitch' do
   config = use_native_modules!
 
-  pod 'HyperswitchResources', :path => 'RNHyperSwitch/resources'
+  pod 'HyperswitchResources', :path => './'
 
   use_react_native!(
     :path => config[:reactNativePath],

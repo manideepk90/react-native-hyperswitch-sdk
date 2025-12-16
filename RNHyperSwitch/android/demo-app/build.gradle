@@ -1,0 +1,43 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    // id 'io.hyperswitch.plugin'
+}
+
+android {
+    namespace 'io.hyperswitch.demoapp'
+    compileSdk rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        applicationId "io.hyperswitch.demoapp"
+        minSdk rootProject.ext.minSdkVersion
+        targetSdk rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
+            pseudoLocalesEnabled false
+            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
+
+        }
+    }
+}
+
+dependencies {
+    implementation project(':app')
+    implementation libs.fuel
+    implementation libs.kotlin.coroutines
+    implementation libs.androidx.preference
+    implementation 'org.slf4j:slf4j-nop:2.0.17'
+    androidTestImplementation('com.wix:detox:+')
+}

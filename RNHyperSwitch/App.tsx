@@ -30,7 +30,9 @@ function App() {
   );
 }
 
-const AsyncComponent = React.lazy(() => import('./src/AsyncComponent'));
+const AsyncComponent = React.lazy(
+  () => import(/* webpackChunkName: "AsyncComponent" */ './src/AsyncComponent'),
+);
 
 function AppContent() {
   const safeAreaInsets = useSafeAreaInsets();
@@ -38,11 +40,9 @@ function AppContent() {
     <View style={[styles.container, { paddingTop: safeAreaInsets.top }]}>
       <View style={styles.chunkContainer}>
         <Text style={styles.sectionTitle}>Code Splitting Demo</Text>
-          <Suspense
-            fallback={<ActivityIndicator size="large" color="#0000ff" />}
-          >
-            <AsyncComponent />
-          </Suspense>
+        <Suspense fallback={<ActivityIndicator size="large" color="#0000ff" />}>
+          <AsyncComponent />
+        </Suspense>
       </View>
     </View>
   );

@@ -1,4 +1,4 @@
-apply plugin: "com.android.application"
+apply plugin: "com.android.library"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
@@ -51,7 +51,7 @@ react {
     // hermesFlags = ["-O", "-output-source-map"]
 
     /* Autolinking */
-    autolinkLibrariesWithApp()
+    // autolinkLibrariesWithApp()
 }
 
 /**
@@ -79,7 +79,6 @@ android {
 
     namespace "com.rnhyperswitch"
     defaultConfig {
-        applicationId "com.rnhyperswitch"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -109,11 +108,11 @@ android {
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
-    implementation("com.facebook.react:react-android")
+    api("com.facebook.react:react-android")
 
     if (hermesEnabled.toBoolean()) {
-        implementation("com.facebook.react:hermes-android")
+        api("com.facebook.react:hermes-android")
     } else {
-        implementation jscFlavor
+        api jscFlavor
     }
 }
