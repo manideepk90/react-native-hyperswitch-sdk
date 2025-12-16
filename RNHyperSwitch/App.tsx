@@ -5,14 +5,20 @@
  * @format
  */
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View, ActivityIndicator, Text } from 'react-native';
+import {
+  StatusBar,
+  StyleSheet,
+  useColorScheme,
+  View,
+  ActivityIndicator,
+  Text,
+} from 'react-native';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -28,14 +34,15 @@ const AsyncComponent = React.lazy(() => import('./src/AsyncComponent'));
 
 function AppContent() {
   const safeAreaInsets = useSafeAreaInsets();
-
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: safeAreaInsets.top }]}>
       <View style={styles.chunkContainer}>
         <Text style={styles.sectionTitle}>Code Splitting Demo</Text>
-        <Suspense fallback={<ActivityIndicator size="large" color="#0000ff" />}>
-          <AsyncComponent />
-        </Suspense>
+          <Suspense
+            fallback={<ActivityIndicator size="large" color="#0000ff" />}
+          >
+            <AsyncComponent />
+          </Suspense>
       </View>
     </View>
   );

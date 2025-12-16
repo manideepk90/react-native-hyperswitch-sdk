@@ -1,0 +1,28 @@
+{
+  "name": "react-native-lib-demo",
+  "version": "0.0.0",
+  "description": "This is demo library to make the TURBO modules optional",
+  "main": "src/index",
+  "codegenConfig": {
+    "name": "LibDemoSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+    "javaPackageName": "com.libdemo"
+  }
+  },
+  "author": "Kuntimaddi Manideep <kuntimaddi.manideep@juspay.in> (https://github.com/manideepk90)",
+  "license": "UNLICENSED",
+  "homepage": "https://github.com/manideepk90/react-native-lib-demo#readme",
+  "create-react-native-library": {
+    "type": "turbo-module",
+    "languages": "kotlin-objc",
+    "tools": [
+      "eslint",
+      "jest",
+      "lefthook",
+      "release-it"
+    ],
+    "version": "0.56.0"
+  }
+}

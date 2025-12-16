@@ -1,10 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 const AsyncComponent = () => {
+  const [data, setData] = React.useState(0);
+
+  const calculate = async () => {
+    const NativeLibDemo = await import(
+      'react-native-lib-demo'
+    );
+    setData(NativeLibDemo.multiply(3, 4));
+  };
+  useEffect(() => {
+    calculate();
+  }, []);
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>This is a lazy loaded component!</Text>
+      <Text style={styles.text}>The Module return this {data}</Text>
     </View>
   );
 };

@@ -14,18 +14,19 @@ ScriptManager.shared.addResolver(async (scriptId, caller) => {
       cache: false,
     };
   }
+  console.log('manideep', scriptId, Platform.OS);
   if (Platform.OS === 'android') {
     return {
-      url: Script.getFileSystemURL(`assets://${scriptId}`)
+      url: Script.getFileSystemURL(`assets://${scriptId}`),
     };
-  }else if (Platform.OS === 'ios') {
+  } else if (Platform.OS === 'ios') {
     return {
       url: Script.getFileSystemURL(`${scriptId}`),
     };
   }
-      return {
-      url: Script.getRemoteURL(`https://URL.com/assets/v1/chunks/${scriptId}`),
-    };
+  return {
+    url: Script.getRemoteURL(`https://URL.com/assets/v1/chunks/${scriptId}`),
+  };
 });
 
 AppRegistry.registerComponent(appName, () => App);

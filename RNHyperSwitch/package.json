@@ -8,13 +8,14 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
-    "bundle:android": "npx react-native bundle --entry-file index.js --platform android --dev false --bundle-output android/app/src/main/assets/hyperswitch.bundle --assets-dest android/app/src/main/res",
+    "bundle:android": "npx react-native bundle --entry-file index.js --platform android --dev false --assets-dest android/app/src/main/res",
     "bundle:ios": "npx react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/RNHyperSwitch/resources/hyperswitch.bundle --assets-dest ios/RNHyperSwitch/resources/assets"
   },
   "dependencies": {
+    "@react-native/new-app-screen": "0.81.5",
     "react": "19.1.0",
     "react-native": "0.81.5",
-    "@react-native/new-app-screen": "0.81.5",
+    "react-native-lib-demo": "./react-native-lib-demo",
     "react-native-safe-area-context": "^5.5.2"
   },
   "devDependencies": {
