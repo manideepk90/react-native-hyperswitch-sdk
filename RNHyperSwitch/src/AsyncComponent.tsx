@@ -5,10 +5,15 @@ const AsyncComponent = () => {
   const [data, setData] = React.useState(0);
 
   const calculate = async () => {
+    try {
     const NativeLibDemo = await import(
+      /* webpackChunkName: "react-native-lib-demo" */
       'react-native-lib-demo'
     );
     setData(NativeLibDemo.multiply(3, 4));
+    } catch (error) {
+      console.log('Manideep Error loading module:', error);
+    }
   };
   useEffect(() => {
     calculate();
