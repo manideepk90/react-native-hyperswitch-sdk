@@ -83,7 +83,6 @@ class HyperSwitchSDK(
                 override fun getPackages(): List<ReactPackage> = packageList
 
                 override fun getJSMainModuleName(): String = "index"
-                override fun getBundleAssetName(): String = "hyperswitch.bundle"
                 override fun getJSBundleFile(): String {
                     return "assets://hyperswitch.bundle" // TODO need to OTA here
                 }

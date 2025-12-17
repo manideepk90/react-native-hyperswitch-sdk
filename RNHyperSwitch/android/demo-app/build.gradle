@@ -7,7 +7,11 @@ plugins {
 android {
     namespace 'io.hyperswitch.demoapp'
     compileSdk rootProject.ext.compileSdkVersion
-
+    sourceSets {
+        main {
+            java.srcDirs += ["${project(':app').buildDir}/generated/source/react/debug"]
+        }
+    }
     defaultConfig {
         applicationId "io.hyperswitch.demoapp"
         minSdk rootProject.ext.minSdkVersion
