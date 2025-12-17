@@ -9,7 +9,8 @@
     "start": "react-native start",
     "test": "jest",
     "bundle:android": "npx react-native bundle --entry-file index.js --platform android --dev false --assets-dest android/app/src/main/res",
-    "bundle:ios": "npx react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/RNHyperSwitch/resources/hyperswitch.bundle --assets-dest ios/RNHyperSwitch/resources/assets"
+    "bundle:ios": "npx react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/RNHyperSwitch/resources/hyperswitch.bundle --assets-dest ios/RNHyperSwitch/resources/assets",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@react-native/new-app-screen": "0.81.5",
