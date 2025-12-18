@@ -13,11 +13,12 @@ import com.facebook.react.ReactNativeApplicationEntryPoint.loadReactNative
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
 import com.facebook.react.defaults.DefaultReactHost
+import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.runtime.hermes.HermesInstance
 
 class HyperSwitchSDK(
-    private val reactNativeHost: ReactNativeHost, private val reactHost: ReactHost
+    private val reactHost: ReactHost, private val reactNativeHost: ReactNativeHost
 ) {
 
     public fun getReactHost(): ReactHost {
@@ -33,11 +34,12 @@ class HyperSwitchSDK(
             putString("type", "payment")
             putString("from", "rn")
         }
-        val hyperSwitchFragment = HyperswitchFragment.Builder().setComponentName("hyperSwitch").setLaunchOptions(propsBundle).build()
+        val hyperSwitchFragment = HyperswitchFragment.Builder().setComponentName("hyperSwitch")
+            .setLaunchOptions(propsBundle).build()
 
         val fragmentManager: FragmentManager = (activity as FragmentActivity).supportFragmentManager
         val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.add(android.R.id.content,hyperSwitchFragment, "HyperPaymentSheet")
+        fragmentTransaction.add(android.R.id.content, hyperSwitchFragment, "HyperPaymentSheet")
         fragmentTransaction.addToBackStack("HyperPaymentSheet")
         fragmentTransaction.commit()
     }
@@ -59,7 +61,7 @@ class HyperSwitchSDK(
         fun init(application: Application, reactHost: ReactHost, reactNativeHost: ReactNativeHost) {
             if (!isInitialized) {
                 initReactNative(application)
-                shared = HyperSwitchSDK(reactNativeHost, reactHost)
+                shared = HyperSwitchSDK(reactHost, reactNativeHost)
                 isInitialized = true
             }
         }
@@ -71,36 +73,28 @@ class HyperSwitchSDK(
             initReactNative(application)
 
             val useDeveloperSupport = BuildConfig.DEBUG
-
-            val reactHost = DefaultReactHost.getDefaultReactHost(
-                application,
-                packageList,
-                "index",
-                "hyperswitch",
-                "assets://hyperswitch.bundle", // TODO need to OTA here
-                HermesInstance(),
-                useDeveloperSupport
-            )
+            val reactHost: ReactHost by lazy {
+                getDefaultReactHost(
+                    context = application,
+                    packageList =
+                        PackageList(application).packages,
+                    jsMainModulePath = "index",
+                    jsBundleAssetPath = "hyperswitch.bundle",
+                    jsBundleFilePath = "assets://hyperswitch.bundle",
+                    useDevSupport = BuildConfig.DEBUG,
+                    jsRuntimeFactory = HermesInstance()
+                )
+            }
             val reactNativeHost = object : DefaultReactNativeHost(application) {
                 override fun getPackages(): List<ReactPackage> = packageList
-
                 override fun getJSMainModuleName(): String = "index"
-
                 override fun getJSBundleFile(): String? {
                     return "assets://hyperswitch.bundle"
-
                 }
 
                 override fun getUseDeveloperSupport(): Boolean = useDeveloperSupport
-
                 override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
                 override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
-
-//                @Deprecated(
-//                    "Setting isHermesEnabled inside `ReactNativeHost` is deprecated and this field will be ignored. If this field is set to true, you can safely remove it. If this field is set to false, please follow the setup on https://github.com/react-native-community/javascriptcore to continue using JSC",
-//                    replaceWith = ReplaceWith("")
-//                )
-//                override val isHermesEnabled: Boolean = true
             }
             init(application, reactHost, reactNativeHost)
 
