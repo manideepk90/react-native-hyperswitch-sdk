@@ -1,22 +1,37 @@
 # Active Context
 
-## Current Work Focus
-The primary focus has been on configuring the Android build system for the `RNHyperSwitch` library (`android/app`) to correctly support the React Native New Architecture (TurboModules) and Codegen.
+## Current Focus
+- Supporting library-as-optional mode for React Native Hyperswitch SDK
+- Validating the patch to @react-native/gradle-plugin which fixes soloader and turbomodules issues
+- Android build system configuration for New Architecture (TurboModules)
+
+## Key Implementation Details
+- **Library Mode (`generatePackageList=true`)**:
+  - The SDK builds as a library instead of an application.
+  - ReactPlugin.kt conditionally configures Android components based on this flag.
+  - This mode requires specific handling of shared libraries (.so files) to avoid conflicts and ensure proper loading.
+- **Patch Fixes (`@react-native+gradle-plugin+0.81.5.patch`)**:
+  - Fixes soloader and TurboModules issues by configuring `pickFirst` packaging options for JNI libs (`libfbjni.so`, `libc++_shared.so`, `libjsi.so`, `libreactnative.so`).
+  - Modifies `ReactPlugin.kt`, `AgpConfiguratorUtils.kt`, and `NdkConfiguratorUtils.kt` to support `LibraryAndroidComponentsExtension`.
+- **Typo Note**: The patch contains a typo `generatePacakageList` in `AgpConfiguratorUtils.kt` which should be monitored, though the user reports the fix is working.
 
 ## Recent Changes
-- **Implemented DefaultHardwareBackBtnHandler**: Updated `demo-app`'s `MainActivity` to implement the back button handler required by React Native.
-- **Fixed `libappmodules.so` Missing Issue**:
-    - Created `android/app/src/main/jni/OnLoad.cpp` as a C++ entry point.
-    - Created `android/app/src/main/jni/CMakeLists.txt` which includes `ReactNative-application.cmake` to handle linking of React Native core, Autolinking, and Codegen artifacts.
-    - Updated `android/app/build.gradle` to set `jsRootDir` (pointing to root) and enable `externalNativeBuild` using the created CMake file.
-- **Fixed Dependencies**: Changed `react-android` dependency from `implementation` to `api` in the library's `build.gradle` so consumers (`demo-app`) can access RN types.
-- **Fixed ReactPlugin Resolution**: Patched `ReactPlugin.kt` to correctly handle `generatePackageList` property as a String, ensuring dependency resolution (Hermes, React Native) works correctly for the library module acting as an app.
+- Commit `7adb77c`: part4: library as optional
+- Commit `d74b40b`: chore: changed paths
+- Commit `d576544`: part4: android changes
+- **Patch Applied**: `@react-native+gradle-plugin+0.81.5.patch` - Fixes soloader and TurboModules loading issues in library mode.
+
+## Current Status
+- Library mode implementation is active.
+- Patch for gradle plugin is applied and reported to fix key issues.
+- Android build system configured for New Architecture.
 
 ## Next Steps
-- **Verify Build**: Ensure that `demo-app` can successfully build and run, and that `libappmodules.so` is present and loads correctly.
-- **Test TurboModules**: Verify that `react-native-lib-demo` and `react-native-safe-area-context` are functioning as expected within the app.
-- **iOS Setup**: Check if similar configurations are needed for the iOS side (Podfile, etc.).
+1. Verify the fix by running the build/app (user confirmed fix, but verification is good practice).
+2. Update documentation for library usage to include the need for this patch/configuration.
+3. Address the typo in the patch (`generatePacakageList`) if it causes issues in `AgpConfiguratorUtils`.
+4. Verify iOS compatibility for library mode.
 
-## Active Decisions
-- **Library Structure**: The `android/app` module acts as the Android library implementation for `RNHyperSwitch`. Despite the name `app`, it is configured as a library (`com.android.library`).
-- **CMake Strategy**: Utilizing `ReactNative-application.cmake` is the standard way to ensure all New Architecture components (Autolinking, Fabric, TurboModules) are linked correctly.
+## Critical Patterns
+- **Conditional Plugin Configuration**: The gradle plugin behaves differently based on `generatePackageList` property.
+- **Packaging Options**: Using `pickFirst` for JNI libs is critical for avoiding "more than one file was found" errors and ensuring correct library loading in the library-as-module setup.

@@ -1,8 +1,8 @@
 apply plugin: "com.android.library"
 apply plugin: "org.jetbrains.kotlin.android"
-
-ext.generatePackageList=true
+ext.generatePackageList = true
 apply plugin: "com.facebook.react"
+
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -122,6 +122,13 @@ android {
 //        exclude "lib/**/libnative-filters.so"
 //        exclude "lib/**/libnative-imagetranscoder.so"
     }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
+
 }
 
 dependencies {
@@ -132,5 +139,113 @@ dependencies {
         api("com.facebook.react:hermes-android")
     } else {
         api jscFlavor
+    }
+}
+
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url("$rootDir/maven/")
+        }
+        maven {
+            url "https://jitpack.io"
+        }
+        maven {
+            url("$rootDir/../node_modules/detox/Detox-android")
+        }
+        maven {
+            url "https://maven.juspay.in/hyper-sdk/"
+        }
+    }
+}
+
+apply plugin: "maven-publish"
+def runtimeDeps = [
+        'react-native-inappbrowser-reborn',
+        'react-native-svg',
+        'sentry_react-native',
+]
+
+def runtimeDepsExcluded = [
+        'demo-app',
+        'demo-app-lite'
+]
+
+def runtimeDepsOptional = [
+        'react-native-hyperswitch-kount',
+        'react-native-hyperswitch-paypal',
+        'juspay-tech_react-native-hyperswitch-netcetera-3ds',
+        'juspay-tech_react-native-hyperswitch-samsung-pay',
+        'juspay-tech_react-native-hyperswitch-scancard',
+        'react-native-klarna-inapp-sdk',
+]
+
+def configurePomMetadata = { root ->
+    root.appendNode('name', 'Hyperswitch SDK for Android')
+    root.appendNode('description', 'This is the Hyperswitch SDK for Android, providing seamless integration with the Hyperswitch platform.')
+    root.appendNode('url', 'http://www.hyperswitch.io')
+
+    def licenseNode = root.appendNode('licenses').appendNode('license')
+    licenseNode.appendNode('name', 'The Apache License, Version 2.0')
+    licenseNode.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+    licenseNode.appendNode('distribution', 'repo')
+
+    def scmNode = root.appendNode('scm')
+    scmNode.appendNode('url', 'https://github.com/hyperswitch/hyperswitch-sdk-android')
+    scmNode.appendNode('connection', 'scm:git:git://github.com/juspay/hyperswitch-sdk-android.git')
+    scmNode.appendNode('developerConnection', 'scm:git:ssh://git@github.com:juspay/hyperswitch-sdk-android.git')
+    scmNode.appendNode('tag', 'HEAD')
+
+    def developerNode = root.appendNode('developers').appendNode('developer')
+    developerNode.appendNode('id', 'sh-iv-am')
+    developerNode.appendNode('name', 'Shivam')
+    developerNode.appendNode('email', 'shivam.shashank@juspay.in')
+}
+
+gradle.projectsEvaluated {
+    subprojects {
+        def configurePom = { pom ->
+            def root = pom.asNode()
+            configurePomMetadata(root)
+
+            def dependencies = root.appendNode('dependencies')
+            configurations.getByName('releaseCompileClasspath').getResolvedConfiguration().getFirstLevelModuleDependencies().each {
+                if (!runtimeDepsOptional.contains(it.moduleName)) {
+                    def dependency = dependencies.appendNode('dependency')
+                    dependency.appendNode('groupId', it.moduleGroup)
+                    dependency.appendNode('artifactId', it.moduleName)
+                    dependency.appendNode('version', runtimeDeps.contains(it.moduleName) ? rnlibVersion : it.moduleVersion)
+                }
+            }
+        }
+
+        def androidSourcesJar = tasks.register('androidSourcesJar', Jar) {
+            archiveClassifier.set('sources')
+            from android.sourceSets.main.java.srcDirs
+            from android.sourceSets.main.kotlin.srcDirs
+        }
+
+        publishing {
+            publications {
+                if (!runtimeDepsExcluded.contains(project.name)) {
+                    "$project.name"(MavenPublication) {
+                        groupId = project.group
+                        artifactId = project.name == 'app' ? 'hyperswitch-sdk-android' : project.name
+                        version = runtimeDeps.contains(project.name) || runtimeDepsOptional.contains(project.name) ? rnlibVersion : project.version
+                        artifact "$buildDir/outputs/aar/$project.name-release.aar"
+                        artifact androidSourcesJar
+                        pom.withXml(configurePom)
+                    }
+                }
+            }
+            repositories {
+                maven {
+                    url("${project.rootDir}/maven")
+                }
+            }
+        }
     }
 }

@@ -12,6 +12,7 @@ The project follows a Monorepo-like structure where the SDK library and the demo
 ## Key Technical Decisions
 - **React Native New Architecture**: The project fully embraces the New Architecture (TurboModules, Fabric) for performance and native interoperability.
 - **Native-as-Library**: The SDK is built as a native library that embeds the React Native runtime (or links against it) and can be consumed by other native apps or RN apps.
+- **Gradle Plugin Patching**: To support the "Native-as-Library" pattern, the `@react-native/gradle-plugin` is patched to handle `generatePackageList=true`, allowing the SDK to build as a library with correct shared library packaging (`pickFirst` for JNI libs).
 - **Codegen**: Heavily relies on React Native Codegen to generate type-safe bindings between JavaScript and Native code.
 - **Autolinking**: Uses standard React Native Autolinking to manage native dependencies.
 

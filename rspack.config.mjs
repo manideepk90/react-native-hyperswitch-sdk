@@ -1,36 +1,41 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as Repack from '@callstack/repack';
+import { MoveAssetsPlugin } from './plugins/MoveAssetsPlugin.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/**
- * Rspack configuration enhanced with Re.Pack defaults for React Native.
- *
- * Learn about Rspack configuration: https://rspack.dev/config/
- * Learn about Re.Pack configuration: https://re-pack.dev/docs/guides/configuration
- */
+const optionalDependencies = [/react-native-lib-demo/];
 
-export default Repack.defineRspackConfig((env) => {
-  const { platform, mode } = env;
+export default Repack.defineRspackConfig(env => {
+  const { platform } = env;
 
-  const defaultDest =
+  const appAssets =
     platform === 'android'
       ? path.resolve(__dirname, 'android/app/src/main/assets')
       : path.resolve(__dirname, 'ios/RNHyperSwitch/resources');
 
+  const libAssets =
+    platform === 'android'
+      ? path.resolve(__dirname, 'react-native-lib-demo/android/src/main/assets')
+      : path.resolve(__dirname, 'react-native-lib-demo/ios/resources');
+
   return {
     context: __dirname,
     entry: './index.js',
+
     resolve: {
       ...Repack.getResolveOptions(),
     },
+
     output: {
       filename: 'hyperswitch.bundle',
-      chunkFilename: '[name].chunk.bundle',
-      path: defaultDest,
+      path: path.resolve(__dirname, "build/generated/rspack"),
+      chunkFilename: platform === 'android' ? '[name].android.chunk.bundle' : '[name].ios.chunk.bundle',
+      clean: true,
     },
+
     module: {
       rules: [
         {
@@ -45,29 +50,25 @@ export default Repack.defineRspackConfig((env) => {
         ...Repack.getAssetTransformRules(),
       ],
     },
+
     plugins: [
       new Repack.RepackPlugin({
         extraChunks: [
           {
-            test: /react-native-lib-demo/,
+            test: optionalDependencies,
             type: 'remote',
-            outputPath:
-              platform === 'android'
-                ? path.resolve(
-                    __dirname,
-                    'react-native-lib-demo/android/src/main/assets'
-                  )
-                : path.resolve(
-                    __dirname,
-                    'react-native-lib-demo/ios/resources'
-                ),
+            outputPath: libAssets,
           },
           {
-            exclude: /react-native-lib-demo/,
+            exclude: optionalDependencies,
             type: 'remote',
-            outputPath: defaultDest,
-          },
+            outputPath: appAssets,
+          }
         ],
+      }),
+      new MoveAssetsPlugin({
+        appAssetsPath: appAssets,
+        patterns: optionalDependencies,
       }),
     ],
   };

@@ -14,7 +14,7 @@
 - `react-native`: The core framework.
 - `react-native-safe-area-context`: Handling safe areas (Autolinked TurboModule).
 - `react-native-lib-demo`: Local demo library (Autolinked TurboModule).
-- `react-native-gradle-plugin`: Plugin for building RN apps/libraries.
+- `react-native-gradle-plugin`: Plugin for building RN apps/libraries (Patched for library mode).
 
 ## Development Setup
 - **Codegen**: Used to generate native interfaces from TypeScript specs.
