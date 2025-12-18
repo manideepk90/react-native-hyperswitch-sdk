@@ -9,7 +9,7 @@
     "start": "react-native start",
     "test": "jest",
     "bundle:android": "npx react-native bundle --entry-file index.js --platform android --dev false",
-    "bundle:ios": "npx react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/RNHyperSwitch/resources/hyperswitch.bundle",
+    "bundle:ios": "npx react-native bundle --entry-file index.js --platform ios --dev false",
     "postinstall": "patch-package"
   },
   "dependencies": {

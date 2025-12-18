@@ -9,12 +9,17 @@ const __dirname = path.dirname(__filename);
 const optionalDependencies = [/react-native-lib-demo/];
 
 export default Repack.defineRspackConfig(env => {
-  const { platform } = env;
+  const { platform, mode } = env;
 
   const appAssets =
     platform === 'android'
       ? path.resolve(__dirname, 'android/app/src/main/assets')
-      : path.resolve(__dirname, 'ios/RNHyperSwitch/resources');
+      : path.resolve(__dirname, 'ios/hyperswitch/resources');
+
+  const appAssetsGenerated =
+    platform === 'android'
+      ? path.resolve(__dirname, 'build/hyperswitch/android')
+      : path.resolve(__dirname, 'build/hyperswitch/ios');
 
   const libAssets =
     platform === 'android'
@@ -28,14 +33,6 @@ export default Repack.defineRspackConfig(env => {
     resolve: {
       ...Repack.getResolveOptions(),
     },
-
-    output: {
-      filename: 'hyperswitch.bundle',
-      path: path.resolve(__dirname, "build/generated/rspack"),
-      chunkFilename: platform === 'android' ? '[name].android.chunk.bundle' : '[name].ios.chunk.bundle',
-      clean: true,
-    },
-
     module: {
       rules: [
         {
@@ -50,26 +47,41 @@ export default Repack.defineRspackConfig(env => {
         ...Repack.getAssetTransformRules(),
       ],
     },
-
+    ...(mode === 'production' && {
+      output: {
+        filename: 'hyperswitch.bundle',
+        path: appAssetsGenerated,
+        chunkFilename: '[name].chunk.bundle',
+        clean: true,
+      },
+    }),
     plugins: [
-      new Repack.RepackPlugin({
-        extraChunks: [
-          {
-            test: optionalDependencies,
-            type: 'remote',
-            outputPath: libAssets,
-          },
-          {
-            exclude: optionalDependencies,
-            type: 'remote',
-            outputPath: appAssets,
-          }
-        ],
-      }),
-      new MoveAssetsPlugin({
-        appAssetsPath: appAssets,
-        patterns: optionalDependencies,
-      }),
+      new Repack.RepackPlugin(
+        mode === 'production'
+          ? {
+              extraChunks: [
+                {
+                  test: optionalDependencies,
+                  type: 'remote',
+                  outputPath: libAssets,
+                },
+                {
+                  exclude: optionalDependencies,
+                  type: 'remote',
+                  outputPath: appAssets,
+                },
+              ],
+            }
+          : {},
+      ),
+      ...(mode === 'production'
+        ? [
+            new MoveAssetsPlugin({
+              appAssetsPath: appAssets,
+              patterns: optionalDependencies,
+            }),
+          ]
+        : []),
     ],
   };
 });

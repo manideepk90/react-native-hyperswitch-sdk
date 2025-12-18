@@ -70,6 +70,8 @@ class HyperSwitchSDK(
         fun init(application: Application, packageList: List<ReactPackage>, enableOTA: Boolean) {
             initReactNative(application)
 
+            val useDeveloperSupport = BuildConfig.DEBUG
+
             val reactHost = DefaultReactHost.getDefaultReactHost(
                 application,
                 packageList,
@@ -77,17 +79,19 @@ class HyperSwitchSDK(
                 "hyperswitch",
                 "assets://hyperswitch.bundle", // TODO need to OTA here
                 HermesInstance(),
-                BuildConfig.DEBUG
+                useDeveloperSupport
             )
             val reactNativeHost = object : DefaultReactNativeHost(application) {
                 override fun getPackages(): List<ReactPackage> = packageList
 
                 override fun getJSMainModuleName(): String = "index"
-                override fun getJSBundleFile(): String {
-                    return "assets://hyperswitch.bundle" // TODO need to OTA here
+
+                override fun getJSBundleFile(): String? {
+                    return "assets://hyperswitch.bundle"
+
                 }
 
-                override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
+                override fun getUseDeveloperSupport(): Boolean = useDeveloperSupport
 
                 override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
                 override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED

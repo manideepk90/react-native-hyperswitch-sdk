@@ -38,12 +38,7 @@ function AppContent() {
   const safeAreaInsets = useSafeAreaInsets();
   return (
     <View style={[styles.container, { paddingTop: safeAreaInsets.top }]}>
-      <View style={styles.chunkContainer}>
-        <Text style={styles.sectionTitle}>Code Splitting Demo</Text>
-        <Suspense fallback={<ActivityIndicator size="large" color="#0000ff" />}>
-          <AsyncComponent />
-        </Suspense>
-      </View>
+        <NewAppScreen />
     </View>
   );
 }
@@ -51,12 +46,6 @@ function AppContent() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  chunkContainer: {
-    padding: 20,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#ccc',
   },
   sectionTitle: {
     fontSize: 20,

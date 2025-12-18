@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   commands: require('@callstack/repack/commands/rspack'),
-project: {
+  project: {
     ios: {
       automaticPodsInstallation: true,
     },
@@ -10,6 +10,6 @@ project: {
   dependencies: {
     'react-native-lib-demo': {
       root: path.join(__dirname, '.', 'react-native-lib-demo'),
-    }
+    },
   },
 };

@@ -8,5 +8,5 @@ Pod::Spec.new do |s|
   s.author       = { "Hyperswitch" => "support@hyperswitch.io" }
   s.platform     = :ios, "13.0"
   s.source       = { :git => ".", :tag => s.version.to_s }
-  s.resources    = "RNHyperSwitch/resources/**"
+  s.resources    = "hyperswitch/resources/**"
 end
