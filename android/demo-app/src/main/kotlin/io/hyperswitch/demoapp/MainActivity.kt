@@ -18,7 +18,7 @@ import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.core.Handler
 import org.json.JSONObject
 import androidx.core.content.edit
-import com.rnhyperswitch.HyperSwitchSDK
+import io.hyperswitch.HyperSwitchSDK
 
 
 class MainActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler {

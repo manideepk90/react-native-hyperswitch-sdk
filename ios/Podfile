@@ -14,10 +14,10 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'RNHyperSwitch' do
+target 'hyperSwitch' do
   config = use_native_modules!
 
-  pod 'HyperswitchResources', :path => './'
+  pod 'io.hyperswitch', :path => './'
 
   use_react_native!(
     :path => config[:reactNativePath],

@@ -1,4 +1,4 @@
-package com.rnhyperswitch
+package io.hyperswitch
 
 import android.os.Bundle
 import android.view.LayoutInflater

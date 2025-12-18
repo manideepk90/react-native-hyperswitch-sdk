@@ -1,6 +1,6 @@
-# Project Brief: RNHyperSwitch
+# Project Brief: hyperSwitch
 
-RNHyperSwitch is a React Native SDK that provides a seamless integration for the HyperSwitch payment gateway. It is designed to be consumed by React Native applications to handle payment flows natively.
+hyperSwitch is a React Native SDK that provides a seamless integration for the HyperSwitch payment gateway. It is designed to be consumed by React Native applications to handle payment flows natively.
 
 ## Core Components
 - **HyperSwitchSDK**: The core React Native library (Android/iOS) that wraps the native payment logic.

@@ -4,7 +4,7 @@
 The project follows a Monorepo-like structure where the SDK library and the demo application coexist.
 
 ### Modules
-- **Root (`RNHyperSwitch`)**: Contains `package.json`, `node_modules`, and project-wide configuration.
+- **Root (`hyperSwitch`)**: Contains `package.json`, `node_modules`, and project-wide configuration.
 - **Library (`android/app`)**: The Android implementation of the SDK. It wraps the native HyperSwitch functionality and exposes it to React Native. It is configured as an Android Library (`com.android.library`).
 - **Consumer (`android/demo-app`)**: A standard Android Application (`com.android.application`) that depends on the Library module. It serves as a testbed and usage example.
 - **Dependencies (`react-native-lib-demo`)**: A local library module demonstrating TurboModule integration.

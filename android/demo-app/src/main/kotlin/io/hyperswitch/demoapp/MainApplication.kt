@@ -1,7 +1,7 @@
 package io.hyperswitch.demoapp
 
 import android.app.Application
-import com.rnhyperswitch.HyperSwitchSDK
+import io.hyperswitch.HyperSwitchSDK
 
 class MainApplication: Application() {
     override fun onCreate() {

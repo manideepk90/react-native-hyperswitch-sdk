@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name         = "HyperswitchResources"
+  s.name         = "io.hyperswitch"
   s.version      = "0.0.1"
   s.summary      = "Resources for Hyperswitch"
   s.description  = "Resources bundle for Hyperswitch React Native app"
@@ -8,5 +8,5 @@ Pod::Spec.new do |s|
   s.author       = { "Hyperswitch" => "support@hyperswitch.io" }
   s.platform     = :ios, "13.0"
   s.source       = { :git => ".", :tag => s.version.to_s }
-  s.resources    = "hyperswitch/resources/**"
+  s.resources    = "HyperSwitch/resources/**"
 end

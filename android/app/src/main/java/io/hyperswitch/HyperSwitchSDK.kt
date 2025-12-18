@@ -1,4 +1,4 @@
-package com.rnhyperswitch
+package io.hyperswitch
 
 import android.app.Activity
 import android.app.Application
@@ -33,7 +33,7 @@ class HyperSwitchSDK(
             putString("type", "payment")
             putString("from", "rn")
         }
-        val hyperSwitchFragment = HyperswitchFragment.Builder().setComponentName("RNHyperSwitch").setLaunchOptions(propsBundle).build()
+        val hyperSwitchFragment = HyperswitchFragment.Builder().setComponentName("hyperSwitch").setLaunchOptions(propsBundle).build()
 
         val fragmentManager: FragmentManager = (activity as FragmentActivity).supportFragmentManager
         val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()

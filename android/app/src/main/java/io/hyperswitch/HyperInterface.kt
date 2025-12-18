@@ -1,4 +1,4 @@
-package com.rnhyperswitch
+package io.hyperswitch
 
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
 

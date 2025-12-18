@@ -49,5 +49,4 @@ dependencies {
     implementation libs.kotlin.coroutines
     implementation libs.androidx.preference
     implementation 'org.slf4j:slf4j-nop:2.0.17'
-    androidTestImplementation('com.wix:detox:+')
 }
