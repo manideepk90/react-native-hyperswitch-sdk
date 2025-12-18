@@ -1,24 +1,23 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Previous rules
+-keep class com.google.errorprone.annotations.** { *; }
+-dontwarn com.google.errorprone.annotations.**
+-keep class com.nimbusds.** { *; }
+-keep class com.nimbusds.jose.shaded.** { *; }
+-keep class com.google.gson.** { *; }
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Google Tink rules
+-keep class com.google.crypto.tink.subtle.** { *; }
+-dontwarn com.google.crypto.tink.subtle.**
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Bouncy Castle rules
+-keep class org.bouncycastle.** { *; }
+-dontwarn org.bouncycastle.**
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
-
--dontwarn javax.naming.**
--dontwarn javax.naming.directory.**
+# Prevent removal of required providers
+-keep class com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton { *; }
+-keep class com.nimbusds.jose.jwk.PEMEncodedKeyParser { *; }
+-keep class com.nimbusds.jose.jwk.gen.OctetKeyPairGenerator { *; }
+-keep class com.nimbusds.jose.crypto.Ed25519Signer { *; }
+-keep class com.nimbusds.jose.crypto.Ed25519Verifier { *; }
+-keep class com.nimbusds.jose.crypto.X25519Encrypter { *; }
+-keep class com.nimbusds.jose.crypto.impl.XC20P { *; }

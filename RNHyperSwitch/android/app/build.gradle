@@ -108,6 +108,18 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+
+    packagingOptions {
+        // Exclude libraries already provided by React Native
+        exclude "lib/**/libc++_shared.so"
+        exclude "lib/**/libfbjni.so"
+        exclude "lib/**/libjsi.so"
+        exclude "lib/**/libhermes.so"
+        exclude "lib/**/libreactnative.so"
+        exclude "lib/**/libimagepipeline.so"
+        exclude "lib/**/libnative-filters.so"
+        exclude "lib/**/libnative-imagetranscoder.so"
+    }
 }
 
 dependencies {

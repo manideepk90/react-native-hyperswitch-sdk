@@ -10,6 +10,7 @@ The primary focus has been on configuring the Android build system for the `RNHy
     - Created `android/app/src/main/jni/CMakeLists.txt` which includes `ReactNative-application.cmake` to handle linking of React Native core, Autolinking, and Codegen artifacts.
     - Updated `android/app/build.gradle` to set `jsRootDir` (pointing to root) and enable `externalNativeBuild` using the created CMake file.
 - **Fixed Dependencies**: Changed `react-android` dependency from `implementation` to `api` in the library's `build.gradle` so consumers (`demo-app`) can access RN types.
+- **Fixed ReactPlugin Resolution**: Patched `ReactPlugin.kt` to correctly handle `generatePackageList` property as a String, ensuring dependency resolution (Hermes, React Native) works correctly for the library module acting as an app.
 
 ## Next Steps
 - **Verify Build**: Ensure that `demo-app` can successfully build and run, and that `libappmodules.so` is present and loads correctly.
