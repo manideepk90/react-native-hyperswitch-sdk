@@ -17,7 +17,7 @@ end
 target 'hyperSwitch' do
   config = use_native_modules!
 
-  pod 'io.hyperswitch', :path => './'
+  pod 'hyperswitch-sdk-ios', :path => './'
 
   use_react_native!(
     :path => config[:reactNativePath],

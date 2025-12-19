@@ -8,6 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		75FC45E92EF508A30082DE0B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75FC45E82EF508A30082DE0B /* ContentView.swift */; };
+		75FC45EB2EF508AF0082DE0B /* hyperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75FC45EA2EF508AF0082DE0B /* hyperApp.swift */; };
+		75FC45ED2EF508BC0082DE0B /* HyperViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75FC45EC2EF508BC0082DE0B /* HyperViewModel.swift */; };
+		75FC45EF2EF508CA0082DE0B /* NetworkUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75FC45EE2EF508CA0082DE0B /* NetworkUtility.swift */; };
+		75FC45F12EF508D90082DE0B /* PaymentMethodManagementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75FC45F02EF508D90082DE0B /* PaymentMethodManagementViewController.swift */; };
+		75FC45F32EF508E40082DE0B /* SwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75FC45F22EF508E40082DE0B /* SwiftUIView.swift */; };
+		75FC45F52EF508F20082DE0B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75FC45F42EF508F20082DE0B /* ViewController.swift */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		7838DDFD02000E6E9CDBF0C6 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
@@ -19,6 +26,13 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = hyperSwitch/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = hyperSwitch/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = hyperSwitch/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		75FC45E82EF508A30082DE0B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		75FC45EA2EF508AF0082DE0B /* hyperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hyperApp.swift; sourceTree = "<group>"; };
+		75FC45EC2EF508BC0082DE0B /* HyperViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HyperViewModel.swift; sourceTree = "<group>"; };
+		75FC45EE2EF508CA0082DE0B /* NetworkUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkUtility.swift; sourceTree = "<group>"; };
+		75FC45F02EF508D90082DE0B /* PaymentMethodManagementViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentMethodManagementViewController.swift; sourceTree = "<group>"; };
+		75FC45F22EF508E40082DE0B /* SwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIView.swift; sourceTree = "<group>"; };
+		75FC45F42EF508F20082DE0B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = hyperSwitch/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = hyperSwitch/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		95A4550A7BBD7CA8AFB48AE3 /* Pods-hyperSwitch.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hyperSwitch.release.xcconfig"; path = "Target Support Files/Pods-hyperSwitch/Pods-hyperSwitch.release.xcconfig"; sourceTree = "<group>"; };
@@ -42,6 +56,13 @@
 		13B07FAE1A68108700A75B9A /* hyperSwitch */ = {
 			isa = PBXGroup;
 			children = (
+				75FC45F42EF508F20082DE0B /* ViewController.swift */,
+				75FC45F22EF508E40082DE0B /* SwiftUIView.swift */,
+				75FC45F02EF508D90082DE0B /* PaymentMethodManagementViewController.swift */,
+				75FC45EE2EF508CA0082DE0B /* NetworkUtility.swift */,
+				75FC45EC2EF508BC0082DE0B /* HyperViewModel.swift */,
+				75FC45EA2EF508AF0082DE0B /* hyperApp.swift */,
+				75FC45E82EF508A30082DE0B /* ContentView.swift */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				761780EC2CA45674006654EE /* AppDelegate.swift */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -213,9 +234,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-hyperSwitch/Pods-hyperSwitch-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-hyperSwitch/Pods-hyperSwitch-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -230,9 +255,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-hyperSwitch/Pods-hyperSwitch-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-hyperSwitch/Pods-hyperSwitch-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -246,7 +275,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				75FC45EB2EF508AF0082DE0B /* hyperApp.swift in Sources */,
+				75FC45F32EF508E40082DE0B /* SwiftUIView.swift in Sources */,
+				75FC45F12EF508D90082DE0B /* PaymentMethodManagementViewController.swift in Sources */,
+				75FC45E92EF508A30082DE0B /* ContentView.swift in Sources */,
 				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
+				75FC45ED2EF508BC0082DE0B /* HyperViewModel.swift in Sources */,
+				75FC45F52EF508F20082DE0B /* ViewController.swift in Sources */,
+				75FC45EF2EF508CA0082DE0B /* NetworkUtility.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

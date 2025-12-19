@@ -1,109 +1,103 @@
 package io.hyperswitch.demoapp
 
 import android.app.Activity
-import android.content.Intent
-import android.util.Patterns
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
-import android.view.View
-import android.widget.Button
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.TextView
+import android.widget.Spinner
+import android.widget.Switch
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
-import com.github.kittinunf.fuel.Fuel.reset
-import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.fuel.core.Handler
-import org.json.JSONObject
-import androidx.core.content.edit
 import io.hyperswitch.HyperSwitchSDK
-
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler {
     lateinit var ctx: Activity
-    private var publishableKey: String = ""
-    private var paymentIntentClientSecret: String = "clientSecret"
-    private var netceteraApiKey: String? = null
-    private val prefsName = "HyperswitchPrefs"
-    private val keyServerUrl = "server_url"
-    private var serverUrl = "http://10.0.2.2:5252"
-    private lateinit var editText: EditText
-
-    private fun fetchNetceteraApiKey() {
-        reset().get("$serverUrl/netcetera-sdk-api-key").responseString(object : Handler<String?> {
-            override fun success(value: String?) {
-                try {
-                    val result = value?.let { JSONObject(it) }
-                    netceteraApiKey = result?.getString("netceteraApiKey")
-                } catch (_: Exception) {
-                }
-            }
-
-            override fun failure(error: FuelError) {}
-        })
-    }
-
-    private fun getSharedPreferences(): android.content.SharedPreferences {
-        return ctx.getSharedPreferences(prefsName, MODE_PRIVATE)
-    }
-
-    private fun saveServerUrl(url: String) {
-        getSharedPreferences().edit { putString(keyServerUrl, url) }
-    }
-
-    private fun loadServerUrl(): String {
-        return getSharedPreferences().getString(keyServerUrl, serverUrl) ?: serverUrl
-    }
-
-    private fun isValidUrl(url: String): Boolean {
-        return Patterns.WEB_URL.matcher(url).matches()
-    }
-
-    private fun updateServerUrl(newUrl: String) {
-        if (isValidUrl(newUrl)) {
-            serverUrl = newUrl
-            saveServerUrl(newUrl)
-            setStatus("Reload Client Secret")
-        } else {
-            setStatus("Invalid URL format")
-        }
-    }
+    private lateinit var apiKeyInput: EditText
+    private lateinit var environmentSpinner: Spinner
+    private lateinit var timeoutInput: EditText
+    private lateinit var debugSwitch: Switch
+    private lateinit var backendUrlInput: EditText
+    private lateinit var jsonInput: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
 
         ctx = this
-        editText = ctx.findViewById(R.id.ipAddressInput)
-        serverUrl = loadServerUrl()
-        editText.setText(serverUrl)
 
-        editText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+        // Setup Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        apiKeyInput = findViewById(R.id.apiKeyInput)
+        environmentSpinner = findViewById(R.id.environmentSpinner)
+        timeoutInput = findViewById(R.id.timeoutInput)
+        debugSwitch = findViewById(R.id.debugSwitch)
+        backendUrlInput = findViewById(R.id.backendUrlInput)
+        jsonInput = findViewById(R.id.jsonInput)
 
-            override fun afterTextChanged(s: Editable?) {
-                s?.toString()?.let { newUrl ->
-                    if (newUrl.isNotEmpty()) {
-                        updateServerUrl(newUrl)
-                    }
-                }
-            }
-        })
-        val launchButton = ctx.findViewById<Button>(R.id.launchButton)
-        launchButton.setOnClickListener {
-            HyperSwitchSDK.shared.presentFragment(this@MainActivity)
-        }
-
+        // Setup Spinner
+        val environments = arrayOf("Production", "Sandbox")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, environments)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        environmentSpinner.adapter = adapter
     }
 
-    private fun setStatus(error: String) {
-        runOnUiThread {
-            findViewById<TextView>(R.id.resultText).text = error
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_open) {
+            handleOpen()
+            return true
         }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun handleOpen() {
+        val apiKey = apiKeyInput.text.toString()
+        val environment = environmentSpinner.selectedItem.toString()
+        val timeout = timeoutInput.text.toString().toIntOrNull() ?: 5000
+        val debugMode = debugSwitch.isChecked
+        val backendUrl = backendUrlInput.text.toString()
+        val jsonProps = jsonInput.text.toString()
+
+        val props = mutableMapOf<String, Any>(
+            "publishableKey" to apiKey,
+            "environment" to environment.lowercase(),
+            "timeout" to timeout,
+            "debugMode" to debugMode,
+            "backendUrl" to backendUrl,
+            "type" to "payment",
+            "from" to "rn"
+        )
+
+        try {
+            if (jsonProps.isNotEmpty()) {
+                val jsonObject = JSONObject(jsonProps)
+                val keys = jsonObject.keys()
+                while (keys.hasNext()) {
+                    val key = keys.next()
+                    val value = jsonObject.get(key)
+                    if (value is String) props[key] = value
+                    else if (value is Int) props[key] = value
+                    else if (value is Boolean) props[key] = value
+                    else if (value is Double) props[key] = value
+                }
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Invalid JSON Properties", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        HyperSwitchSDK.shared.presentFragment(this@MainActivity, props)
     }
 
     override fun invokeDefaultOnBackPressed() {

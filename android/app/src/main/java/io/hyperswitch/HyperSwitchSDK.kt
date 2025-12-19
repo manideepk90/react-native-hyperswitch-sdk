@@ -30,9 +30,22 @@ class HyperSwitchSDK(
     }
 
     fun presentFragment(activity: Activity) {
+        presentFragment(activity, emptyMap())
+    }
+
+    fun presentFragment(activity: Activity, props: Map<String, Any>) {
         val propsBundle = Bundle().apply {
             putString("type", "payment")
             putString("from", "rn")
+
+            props.forEach { (key, value) ->
+                when (value) {
+                    is String -> putString(key, value)
+                    is Int -> putInt(key, value)
+                    is Boolean -> putBoolean(key, value)
+                    is Double -> putDouble(key, value)
+                }
+            }
         }
         val hyperSwitchFragment = HyperswitchFragment.Builder().setComponentName("hyperSwitch")
             .setLaunchOptions(propsBundle).build()
