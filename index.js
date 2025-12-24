@@ -2,10 +2,10 @@
  * @format
  */
 
-import { AppRegistry, Platform } from 'react-native';
-import { ScriptManager, Script } from '@callstack/repack/client';
-import App from './App';
-import { name as appName } from './app.json';
+import {AppRegistry, Platform} from 'react-native';
+import {ScriptManager, Script} from '@callstack/repack/client';
+import {default as App} from './src/routes/Update';
+import {name as appName} from './app.json';
 
 ScriptManager.shared.addResolver(async (scriptId, caller) => {
   if (__DEV__) {
@@ -14,7 +14,6 @@ ScriptManager.shared.addResolver(async (scriptId, caller) => {
       cache: false,
     };
   }
-  console.log('manideep', scriptId, Platform.OS);
   if (Platform.OS === 'android') {
     return {
       url: Script.getFileSystemURL(`assets://${scriptId}`),

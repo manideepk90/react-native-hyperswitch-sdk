@@ -1,1 +1,62 @@
-(self.webpackChunkrn_hyperswitch=self.webpackChunkrn_hyperswitch||[]).push([["AsyncComponent"],{32393:function(e,t,n){Object.defineProperty(t,"__esModule",{value:!0}),Object.defineProperty(t,"default",{enumerable:!0,get:function(){return d}});var r=n(41119),o=n(85465),i=n(30703),c=n(14056),l=o._(n(73364)),a=n(25472),u=a.StyleSheet.create({container:{padding:20,backgroundColor:"#f0f0f0",borderRadius:10,marginTop:20,alignItems:"center"},text:{fontSize:18,color:"#333"}}),d=function(){var e=i._(l.default.useState(0),2),t=e[0],o=e[1];return(0,l.useEffect)(function(){r._(function*(){try{var e=yield n.e("react-native-lib-demo").then(n.bind(n,16572));o(e.multiply(3,4))}catch(e){console.log("Manideep Error loading module:",e)}})()},[]),(0,c.jsx)(a.View,{style:u.container,children:(0,c.jsxs)(a.Text,{style:u.text,children:["The Module return this ",t]})})}}}]);//# sourceMappingURL=AsyncComponent.chunk.bundle.map?platform=android
+(self["webpackChunkrn_hyperswitch"] = self["webpackChunkrn_hyperswitch"] || []).push([["AsyncComponent"], {
+32393: (function (__unused_rspack_module, exports, __webpack_require__) {
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+Object.defineProperty(exports, "default", ({
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+}));
+var _async_to_generator = __webpack_require__(41119);
+var _interop_require_wildcard = __webpack_require__(85465);
+var _sliced_to_array = __webpack_require__(30703);
+var _jsxruntime = __webpack_require__(14056);
+var _react = /*#__PURE__*/ _interop_require_wildcard._(__webpack_require__(73364));
+var _reactnative = __webpack_require__(25472);
+var AsyncComponent = function() {
+    var _React_useState = _sliced_to_array._(_react.default.useState(0), 2), data = _React_useState[0], setData = _React_useState[1];
+    var calculate = function() {
+        return _async_to_generator._(function*() {
+            try {
+                var NativeLibDemo = yield __webpack_require__.e(/* import() | react-native-lib-demo */ "react-native-lib-demo").then(__webpack_require__.bind(__webpack_require__, 39295));
+                setData(NativeLibDemo.multiply(3, 4));
+            } catch (error) {
+                console.log('Manideep Error loading module:', error);
+            }
+        })();
+    };
+    (0, _react.useEffect)(function() {
+        calculate();
+    }, []);
+    return /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.View, {
+        style: styles.container,
+        children: /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.Text, {
+            style: styles.text,
+            children: [
+                "The Module return this ",
+                data
+            ]
+        })
+    });
+};
+var styles = _reactnative.StyleSheet.create({
+    container: {
+        padding: 20,
+        backgroundColor: '#f0f0f0',
+        borderRadius: 10,
+        marginTop: 20,
+        alignItems: 'center'
+    },
+    text: {
+        fontSize: 18,
+        color: '#333'
+    }
+});
+var _default = AsyncComponent;
+
+
+}),
+
+}]);//# sourceMappingURL=AsyncComponent.chunk.bundle.map?platform=android

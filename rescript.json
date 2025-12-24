@@ -1,0 +1,25 @@
+{
+  "name": "rn-hyperswitch",
+  "jsx": {"version": 4},
+  "package-specs": {
+    "module": "esmodule",
+    "in-source": true
+  },
+  "compiler-flags": ["-open RescriptCore"],
+  "suffix": ".bs.js",
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": true
+    },
+    {
+      "dir": "./shared-code/sdk-utils",
+      "subdirs": true
+    }
+  ],
+  "dependencies": [
+    "@rescript/react",
+    "rescript-react-native",
+    "@rescript/core"
+  ]
+}

@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
+import android.widget.AutoCompleteTextView
 import android.widget.Switch
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +20,7 @@ class MainActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler {
     lateinit var ctx: Activity
     private lateinit var apiKeyInput: EditText
     private lateinit var environmentSpinner: Spinner
+    private lateinit var environment1Spinner : Spinner
     private lateinit var timeoutInput: EditText
     private lateinit var debugSwitch: Switch
     private lateinit var backendUrlInput: EditText
@@ -40,12 +42,25 @@ class MainActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler {
         debugSwitch = findViewById(R.id.debugSwitch)
         backendUrlInput = findViewById(R.id.backendUrlInput)
         jsonInput = findViewById(R.id.jsonInput)
-
+        environment1Spinner = findViewById(R.id.environmentSpinner1)
         // Setup Spinner
         val environments = arrayOf("Production", "Sandbox")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, environments)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         environmentSpinner.adapter = adapter
+
+        val items = arrayOf("FlowBird", "Sungroup")
+
+        val adapter1 = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            items
+        )
+
+        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        environment1Spinner.adapter = adapter1
+
+        backendUrlInput.setText("http://10.0.2.2:5252")
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

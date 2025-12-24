@@ -25,9 +25,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_card"
             android:orientation="vertical"
             android:padding="16dp">
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -35,6 +36,14 @@
                 android:text="Configure and test your SDK integration"
                 android:textColor="#666666"
                 android:textSize="16sp" />
+            <Spinner
+                android:id="@+id/environmentSpinner1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_input"
+                android:minHeight="48dp"
+                android:padding="12dp" />
 
             <!-- SDK Properties Card -->
             <LinearLayout
@@ -216,8 +225,8 @@
                     android:textSize="14sp" />
 
             </LinearLayout>
-
         </LinearLayout>
+
 
     </ScrollView>
 

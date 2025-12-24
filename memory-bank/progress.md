@@ -12,7 +12,3 @@
 - [ ] Verify `demo-app` builds successfully.
 - [ ] Verify `libappmodules.so` is generated and loaded (Pending final verification).
 - [ ] Verify TurboModules (`safearea`, `libdemo`) are working (Pending final verification).
-
-## Known Issues
-- `libappmodules.so` was missing (Fixed by adding CMake setup and patching gradle plugin).
-- TurboModules were not adding properly (Fixed by including `ReactNative-application.cmake` and patching gradle plugin).

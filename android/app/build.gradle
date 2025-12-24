@@ -111,16 +111,16 @@ android {
 
     packagingOptions {
         // Exclude libraries already provided by React Native
-        pickFirst "**/libc++_shared.so"
-        pickFirst "**/libfbjni.so"
-//        exclude "lib/**/libc++_shared.so"
-//        exclude "lib/**/libfbjni.so"
-//        exclude "lib/**/libjsi.so"
-//        exclude "lib/**/libhermes.so"
-//        exclude "lib/**/libreactnative.so"
-//        exclude "lib/**/libimagepipeline.so"
-//        exclude "lib/**/libnative-filters.so"
-//        exclude "lib/**/libnative-imagetranscoder.so"
+//        pickFirst "**/libc++_shared.so"
+//        pickFirst "**/libfbjni.so"
+        exclude "lib/**/libc++_shared.so"
+        exclude "lib/**/libfbjni.so"
+        exclude "lib/**/libjsi.so"
+        exclude "lib/**/libhermes.so"
+        exclude "lib/**/libreactnative.so"
+        exclude "lib/**/libimagepipeline.so"
+        exclude "lib/**/libnative-filters.so"
+        exclude "lib/**/libnative-imagetranscoder.so"
     }
 
     publishing {

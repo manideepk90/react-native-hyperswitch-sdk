@@ -73,3 +73,27 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+
+.env
+.env.*.local
+!.env.example
+*.log
+
+# Misc
+.vscode/
+.idea/
+*.swp
+*.swo
+*.DS_Store
+Thumbs.db
+
+lib/*
+*.bs.js
+*.js.map
+
+android/release/*
+android/app/build/*
+android/build/*
+android/demo-app/build/*
+android/demo-app/release/*

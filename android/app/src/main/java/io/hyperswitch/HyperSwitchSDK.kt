@@ -85,7 +85,7 @@ class HyperSwitchSDK(
         fun init(application: Application, packageList: List<ReactPackage>, enableOTA: Boolean) {
             initReactNative(application)
 
-            val useDeveloperSupport = BuildConfig.DEBUG
+            val useDeveloperSupport = false
             val reactHost: ReactHost by lazy {
                 getDefaultReactHost(
                     context = application,
@@ -94,7 +94,7 @@ class HyperSwitchSDK(
                     jsMainModulePath = "index",
                     jsBundleAssetPath = "hyperswitch.bundle",
                     jsBundleFilePath = "assets://hyperswitch.bundle",
-                    useDevSupport = BuildConfig.DEBUG,
+                    useDevSupport = useDeveloperSupport,
                     jsRuntimeFactory = HermesInstance()
                 )
             }
@@ -117,6 +117,10 @@ class HyperSwitchSDK(
             init(application, packageList = PackageList(application).packages, enableOTA)
         }
 
+
+        /*
+        * Function that init the SDK with OTA as true
+        * */
         fun init(application: Application) {
             init(application, enableOTA = true)
         }

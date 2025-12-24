@@ -1,4 +1,5 @@
 {
   "name": "hyperSwitch",
-  "displayName": "hyperSwitch"
+  "displayName": "hyperswitch",
+  "headless": "HyperHeadless"
 }
