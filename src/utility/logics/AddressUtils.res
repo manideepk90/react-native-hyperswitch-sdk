@@ -3,7 +3,7 @@ open Utils
 
 let defaultCountry = "US"
 
-let parseBillingAddress = (billingDetailsDict: Js.Dict.t<JSON.t>) => {
+let parseBillingAddress = (billingDetailsDict: dict<JSON.t>) => {
   let addressDict = getOptionalObj(billingDetailsDict, "address")
 
   {

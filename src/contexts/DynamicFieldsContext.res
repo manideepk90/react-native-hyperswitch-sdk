@@ -306,7 +306,8 @@ let make = (~children) => {
       setNickname,
       isNicknameValid,
       setIsNicknameValid,
-    }>
+    }
+  >
     children
   </Provider>
 }

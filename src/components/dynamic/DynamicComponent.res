@@ -188,7 +188,8 @@ let make = (~setConfirmButtonData) => {
   }, (walletData, isFormValid))
 
   <ReactNative.View
-    style={ReactNative.Style.s({paddingVertical: sheetContentPadding->ReactNative.Style.dp})}>
+    style={ReactNative.Style.s({paddingVertical: sheetContentPadding->ReactNative.Style.dp})}
+  >
     <Space />
     <DynamicFields
       fields

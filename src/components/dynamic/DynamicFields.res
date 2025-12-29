@@ -46,7 +46,8 @@ let make = (
       ) {
       | (true, false, NEW_MANDATE | NORMAL) =>
         <ReactNative.View
-          style={ReactNative.Style.s({paddingHorizontal: 2.->ReactNative.Style.dp})}>
+          style={ReactNative.Style.s({paddingHorizontal: 2.->ReactNative.Style.dp})}
+        >
           <ClickableTextElement
             disabled={false}
             initialIconName="checkboxClicked"
@@ -79,7 +80,8 @@ let make = (
     </UIUtils.RenderIf>
     <UIUtils.RenderIf condition={!isCardPayment && !isGiftCardPayment}>
       <UIUtils.RenderIf
-        condition={fields->Array.length == 0 && nativeProp.configuration.appearance.layout === Tab}>
+        condition={fields->Array.length == 0 && nativeProp.configuration.appearance.layout === Tab}
+      >
         <Space />
       </UIUtils.RenderIf>
       <RedirectionText />

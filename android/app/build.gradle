@@ -134,7 +134,10 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     api("com.facebook.react:react-android")
-
+    api project(':hyperswitch-sdk-android-api')
+    implementation project(':hyperswitch-sdk-android-common')
+    implementation project(':hyperswitch-sdk-android-logger')
+//    implementation project(':hyperswitch-sdk-android-hyperota')
     if (hermesEnabled.toBoolean()) {
         api("com.facebook.react:hermes-android")
     } else {

@@ -29,34 +29,6 @@ class HyperSwitchSDK(
         return reactNativeHost
     }
 
-    fun presentFragment(activity: Activity) {
-        presentFragment(activity, emptyMap())
-    }
-
-    fun presentFragment(activity: Activity, props: Map<String, Any>) {
-        val propsBundle = Bundle().apply {
-            putString("type", "payment")
-            putString("from", "rn")
-
-            props.forEach { (key, value) ->
-                when (value) {
-                    is String -> putString(key, value)
-                    is Int -> putInt(key, value)
-                    is Boolean -> putBoolean(key, value)
-                    is Double -> putDouble(key, value)
-                }
-            }
-        }
-        val hyperSwitchFragment = HyperswitchFragment.Builder().setComponentName("hyperSwitch")
-            .setLaunchOptions(propsBundle).build()
-
-        val fragmentManager: FragmentManager = (activity as FragmentActivity).supportFragmentManager
-        val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.add(android.R.id.content, hyperSwitchFragment, "HyperPaymentSheet")
-        fragmentTransaction.addToBackStack("HyperPaymentSheet")
-        fragmentTransaction.commit()
-    }
-
     companion object {
         lateinit var shared: HyperSwitchSDK
 
@@ -85,7 +57,7 @@ class HyperSwitchSDK(
         fun init(application: Application, packageList: List<ReactPackage>, enableOTA: Boolean) {
             initReactNative(application)
 
-            val useDeveloperSupport = false
+            val useDeveloperSupport = true
             val reactHost: ReactHost by lazy {
                 getDefaultReactHost(
                     context = application,

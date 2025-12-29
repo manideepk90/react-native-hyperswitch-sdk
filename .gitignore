@@ -97,3 +97,16 @@ android/app/build/*
 android/build/*
 android/demo-app/build/*
 android/demo-app/release/*
+
+
+dist/*
+build/*
+temp/*
+tmp/*
+.expo/*
+.expo-shared/*
+.env.local
+.env.*.local
+!.env.example
+*.log
+npm-debug.log*

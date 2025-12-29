@@ -11,7 +11,8 @@ let make = (~size=18., ~selected, ~color="#006DF9") => {
       borderColor: selected ? color : "lightgray",
       alignItems: #center,
       justifyContent: #center,
-    })}>
+    })}
+  >
     <View
       style={s({
         height: (size -. 8.)->dp,

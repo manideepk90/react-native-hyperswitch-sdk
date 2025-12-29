@@ -21,7 +21,7 @@ let decodeCountryArray: array<JSON.t> => array<country> = data => {
 let decodeStateJson: JSON.t => Dict.t<array<state>> = data => {
   data
   ->Utils.getDictFromJson
-  ->Js.Dict.entries
+  ->Dict.toArray
   ->Array.map(item => {
     let (key, val) = item
     let newVal =
@@ -38,7 +38,7 @@ let decodeStateJson: JSON.t => Dict.t<array<state>> = data => {
       })
     (key, newVal)
   })
-  ->Js.Dict.fromArray
+  ->Dict.fromArray
 }
 
 let decodeJsonTocountryStateData: JSON.t => countryStateData = jsonData => {
@@ -48,7 +48,7 @@ let decodeJsonTocountryStateData: JSON.t => countryStateData = jsonData => {
         res
         ->Dict.get("country")
         ->Option.getOr([]->Js.Json.Array)
-        ->Js.Json.decodeArray
+        ->JSON.Decode.array
         ->Option.getOr([])
 
       let statesDict =

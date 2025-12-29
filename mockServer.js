@@ -150,6 +150,7 @@ app.get('/create-payment-intent', async (req, res) => {
 
 app.post('/create-payment-intent', async (req, res) => {
   try {
+    console.log("manideep", req.body)
     const paymentData = {
       ...mockData.paymentIntentBody,
       ...req.body,
@@ -190,6 +191,7 @@ app.post('/create-payment-intent', async (req, res) => {
 
 app.post('/create-authentication', async (req, res) => {
   try {
+  
     const authenticationData = {
       amount: 1000,
       currency: 'USD',

@@ -33,7 +33,7 @@ let make = (
 
   let (isSaveCardCheckboxSelected, setSaveCardChecboxSelected) = React.useState(_ => false)
   let setSaveCardChecboxSelected = React.useCallback1(isSelected => {
-    if(isSelected) {
+    if isSelected {
       setErrorText(_ => None)
     }
     setSaveCardChecboxSelected(_ => isSelected)
@@ -86,7 +86,9 @@ let make = (
           accountPaymentMethods.redirect_url
         )
       },
-      ~payment_type_str=accountPaymentMethodData->Option.map(accountPaymentMethods => accountPaymentMethods.payment_type_str)->Option.getOr(None),
+      ~payment_type_str=accountPaymentMethodData
+      ->Option.map(accountPaymentMethods => accountPaymentMethods.payment_type_str)
+      ->Option.getOr(None),
       ~billing=token.billing,
       ~screen_height=viewPortContants.screenHeight,
       ~screen_width=viewPortContants.screenWidth,
@@ -388,7 +390,11 @@ let make = (
     ->Option.getOr(NORMAL) !== NORMAL
 
   let handlePress = _ => {
-    switch (selectedToken, !showDisclaimer || (showDisclaimer && (isSaveCardCheckboxSelected || savedCardCvv->Option.isNone))) {
+    switch (
+      selectedToken,
+      !showDisclaimer ||
+      (showDisclaimer && (isSaveCardCheckboxSelected || savedCardCvv->Option.isNone)),
+    ) {
     | (Some(token), true) =>
       switch token.payment_method {
       | CARD =>
@@ -516,7 +522,7 @@ let make = (
       payment_method_type: selectedToken
       ->Option.map(token => token.payment_method_type)
       ->Option.getOr("Saved Payment"),
-      customer_payment_experience: ?selectedToken->Option.map(token => token.payment_experience),
+      customer_payment_experience: ?(selectedToken->Option.map(token => token.payment_experience)),
       errorText,
     }
     setConfirmButtonData(confirmButton)
@@ -530,7 +536,7 @@ let make = (
     selectedToken,
     savedCardCvv,
     errorText,
-    isSaveCardCheckboxSelected
+    isSaveCardCheckboxSelected,
   ))
 
   <ErrorBoundary level={FallBackScreen.Screen} rootTag=nativeProp.rootTag>
@@ -547,7 +553,8 @@ let make = (
           backgroundColor: component.background,
         }),
         style,
-      ])}>
+      ])}
+    >
       <SavedPaymentMethod
         customerPaymentMethods
         selectedToken

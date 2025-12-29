@@ -70,7 +70,7 @@ let getJsonObjectFromDict = (dict, key) => {
 }
 
 let convertToScreamingSnakeCase = text => {
-  text->String.trim->String.replaceRegExp(%re("/ /g"), "_")->String.toUpperCase
+  text->String.trim->String.replaceRegExp(/ /g, "_")->String.toUpperCase
 }
 
 // TODO subtraction 365 days can be done in exactly one year way
@@ -85,14 +85,14 @@ let toCamelCase = str => {
   } else {
     str
     ->String.toLowerCase
-    ->String.unsafeReplaceRegExpBy0(%re(`/([-_][a-z])/g`), (
+    ->String.unsafeReplaceRegExpBy0(/([-_][a-z])/g, (
       ~match as letter,
       ~offset as _,
       ~input as _,
     ) => {
       letter->String.toUpperCase
     })
-    ->String.replaceRegExp(%re(`/[^a-zA-Z]/g`), "")
+    ->String.replaceRegExp(/[^a-zA-Z]/g, "")
   }
 }
 
@@ -231,7 +231,7 @@ let toCamelCase = str => {
     ->Js.String2.unsafeReplaceBy0(%re(`/([-_][a-z])/g`), (letter, _, _) => {
       letter->String.toUpperCase
     })
-    ->String.replaceRegExp(%re(`/[^a-zA-Z]/g`), "")
+    ->String.replaceRegExp(/[^a-zA-Z]/g, "")
   }
 }
 let toSnakeCase = str => {
@@ -350,8 +350,8 @@ let getStringFromRecord = record => record->JSON.stringifyAny->Option.getOr("")
 let getJsonObjectFromRecord = record => record->Obj.magic
 
 let getError = (err, defaultError) => {
-  switch err->Exn.asJsExn {
-  | Some(exn) => exn->Exn.message->Option.getOr(defaultError)->JSON.Encode.string
+  switch err->JsExn.fromException {
+  | Some(exn) => exn->JsExn.message->Option.getOr(defaultError)->JSON.Encode.string
   | None => defaultError->JSON.Encode.string
   }
 }

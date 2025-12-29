@@ -2,6 +2,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as Repack from '@callstack/repack';
 import { MoveAssetsPlugin } from './plugins/MoveAssetsPlugin.mjs';
+import { IgnorePlugin } from '@rspack/core';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,14 +29,49 @@ export default Repack.defineRspackConfig(env => {
       : path.resolve(__dirname, 'react-native-lib-demo/ios/resources');
 
   return {
-    context: __dirname,
+
     entry: './index.js',
 
     resolve: {
-      ...Repack.getResolveOptions(),
+      ...Repack.getResolveOptions(platform),
+      extensions: [
+        ...(platform === 'android' ? ['.android.bs.js', '.android.js', '.android.jsx', '.android.ts', '.android.tsx'] : []),
+        ...(platform === 'ios' ? ['.ios.bs.js', '.ios.js', '.ios.jsx', '.ios.ts', '.ios.tsx'] : []),
+        '.native.bs.js',
+        '.native.js',
+        '.native.jsx',
+        '.native.ts',
+        '.native.tsx',
+        '.bs.js',
+        '.js',
+        '.jsx',
+        '.ts',
+        '.tsx',
+        '.json',
+      ],
     },
     module: {
       rules: [
+        {
+          test: /\.[jt]sx?$/,
+          include: [
+            path.resolve(__dirname, 'shared-code/sdk-utils'),
+            path.resolve(__dirname, 'src'),
+          ],
+          exclude: /node_modules/,
+          use: {
+            loader: '@callstack/repack/babel-swc-loader',
+          },
+        },
+        {
+          test: /\.json$/,
+          type: 'json',
+          include: [
+            path.resolve(__dirname, 'shared-code/sdk-utils'),
+            path.resolve(__dirname, 'shared-code/assets'),
+          ],
+        },
+
         {
           test: /\.[cm]?[jt]sx?$/,
           type: 'javascript/auto',
@@ -44,6 +81,26 @@ export default Repack.defineRspackConfig(env => {
             options: {},
           },
         },
+        {
+          test: /\.(res|resi|ml|mli)$/,
+          loader: 'ignore-loader'
+        },
+        {
+          test: /\.json$/,
+          type: 'json'
+        }, {
+          test: /shared-code\/assets\/v1\/jsons\/.*$/,
+          type: 'json'
+        },
+        {
+          test: /shared-code\/assets\/v1\/jsons-gzips\/.*$/,
+          type: 'asset/resource'
+        },
+        {
+          test: [/shared-code\/assets\/README.md/, /shared-code\/README.md/, /shared-code\/LICENCE/, /shared-code\/.github\/.*$/],
+          loader: 'ignore-loader'
+        },
+
         ...Repack.getAssetTransformRules(),
       ],
     },
@@ -59,28 +116,31 @@ export default Repack.defineRspackConfig(env => {
       new Repack.RepackPlugin(
         mode === 'production'
           ? {
-              extraChunks: [
-                {
-                  test: optionalDependencies,
-                  type: 'remote',
-                  outputPath: libAssets,
-                },
-                {
-                  exclude: optionalDependencies,
-                  type: 'remote',
-                  outputPath: appAssets,
-                },
-              ],
-            }
+            extraChunks: [
+              {
+                test: optionalDependencies,
+                type: 'remote',
+                outputPath: libAssets,
+              },
+              {
+                exclude: optionalDependencies,
+                type: 'remote',
+                outputPath: appAssets,
+              },
+            ],
+          }
           : {},
       ),
+      new IgnorePlugin({
+        resourceRegExp: /shared-code\/(?!sdk-utils|assets)/,
+      }),
       ...(mode === 'production'
         ? [
-            new MoveAssetsPlugin({
-              appAssetsPath: appAssets,
-              patterns: optionalDependencies,
-            }),
-          ]
+          new MoveAssetsPlugin({
+            appAssetsPath: appAssets,
+            patterns: optionalDependencies,
+          }),
+        ]
         : []),
     ],
   };

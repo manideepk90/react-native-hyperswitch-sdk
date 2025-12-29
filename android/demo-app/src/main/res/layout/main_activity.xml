@@ -36,122 +36,122 @@
                 android:text="Configure and test your SDK integration"
                 android:textColor="#666666"
                 android:textSize="16sp" />
-            <Spinner
-                android:id="@+id/environmentSpinner1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:background="@drawable/bg_input"
-                android:minHeight="48dp"
-                android:padding="12dp" />
+<!--            <Spinner-->
+<!--                android:id="@+id/environmentSpinner1"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginBottom="12dp"-->
+<!--                android:background="@drawable/bg_input"-->
+<!--                android:minHeight="48dp"-->
+<!--                android:padding="12dp" />-->
 
             <!-- SDK Properties Card -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/bg_card"
-                android:orientation="vertical"
-                android:padding="16dp">
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginBottom="16dp"-->
+<!--                android:background="@drawable/bg_card"-->
+<!--                android:orientation="vertical"-->
+<!--                android:padding="16dp">-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="SDK Properties"
-                    android:textColor="#000000"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="SDK Properties"-->
+<!--                    android:textColor="#000000"-->
+<!--                    android:textSize="18sp"-->
+<!--                    android:textStyle="bold" />-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:text="Properties passed to the SDK"
-                    android:textColor="#666666"
-                    android:textSize="14sp" />
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginBottom="12dp"-->
+<!--                    android:text="Properties passed to the SDK"-->
+<!--                    android:textColor="#666666"-->
+<!--                    android:textSize="14sp" />-->
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="12dp"
-                    android:background="#E0E0E0" />
+<!--                <View-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="1dp"-->
+<!--                    android:layout_marginBottom="12dp"-->
+<!--                    android:background="#E0E0E0" />-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:text="API Key"
-                    android:textColor="#000000"
-                    android:textStyle="bold" />
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginBottom="4dp"-->
+<!--                    android:text="API Key"-->
+<!--                    android:textColor="#000000"-->
+<!--                    android:textStyle="bold" />-->
 
-                <EditText
-                    android:id="@+id/apiKeyInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:background="@drawable/bg_input"
-                    android:hint="Enter API key"
-                    android:inputType="text"
-                    android:padding="12dp"
-                    android:textSize="16sp" />
+<!--                <EditText-->
+<!--                    android:id="@+id/apiKeyInput"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginBottom="12dp"-->
+<!--                    android:background="@drawable/bg_input"-->
+<!--                    android:hint="Enter API key"-->
+<!--                    android:inputType="text"-->
+<!--                    android:padding="12dp"-->
+<!--                    android:textSize="16sp" />-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:text="Environment"
-                    android:textColor="#000000"
-                    android:textStyle="bold" />
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginBottom="4dp"-->
+<!--                    android:text="Environment"-->
+<!--                    android:textColor="#000000"-->
+<!--                    android:textStyle="bold" />-->
 
-                <Spinner
-                    android:id="@+id/environmentSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:background="@drawable/bg_input"
-                    android:minHeight="48dp"
-                    android:padding="12dp" />
+<!--                <Spinner-->
+<!--                    android:id="@+id/environmentSpinner"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginBottom="12dp"-->
+<!--                    android:background="@drawable/bg_input"-->
+<!--                    android:minHeight="48dp"-->
+<!--                    android:padding="12dp" />-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:text="Timeout (ms)"
-                    android:textColor="#000000"
-                    android:textStyle="bold" />
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginBottom="4dp"-->
+<!--                    android:text="Timeout (ms)"-->
+<!--                    android:textColor="#000000"-->
+<!--                    android:textStyle="bold" />-->
 
-                <EditText
-                    android:id="@+id/timeoutInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:background="@drawable/bg_input"
-                    android:inputType="number"
-                    android:padding="12dp"
-                    android:text="5000"
-                    android:textSize="16sp" />
+<!--                <EditText-->
+<!--                    android:id="@+id/timeoutInput"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginBottom="12dp"-->
+<!--                    android:background="@drawable/bg_input"-->
+<!--                    android:inputType="number"-->
+<!--                    android:padding="12dp"-->
+<!--                    android:text="5000"-->
+<!--                    android:textSize="16sp" />-->
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:orientation="horizontal">-->
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Debug Mode"
-                        android:textColor="#000000"
-                        android:textStyle="bold" />
+<!--                    <TextView-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:text="Debug Mode"-->
+<!--                        android:textColor="#000000"-->
+<!--                        android:textStyle="bold" />-->
 
-                    <Switch
-                        android:id="@+id/debugSwitch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
+<!--                    <Switch-->
+<!--                        android:id="@+id/debugSwitch"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content" />-->
+<!--                </LinearLayout>-->
 
-            </LinearLayout>
+<!--            </LinearLayout>-->
 
             <!-- Backend Request Card -->
             <LinearLayout
@@ -165,7 +165,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Backend Request"
+                    android:text="Server Request"
                     android:textColor="#000000"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -174,7 +174,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    android:text="JSON to send to backend URL"
+                    android:text="JSON Payload to send to backend URL"
                     android:textColor="#666666"
                     android:textSize="14sp" />
 
@@ -198,8 +198,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     android:background="@drawable/bg_input"
-                    android:hint="https://api.example.com/endpoint"
+                    android:hint="https://sandbox.hyperswitch.io/"
                     android:inputType="textUri"
+                    android:text="http://10.0.2.2:5252"
                     android:padding="12dp"
                     android:textSize="16sp" />
 
@@ -221,7 +222,7 @@
                     android:inputType="textMultiLine"
                     android:minLines="6"
                     android:padding="12dp"
-                    android:text='{\n  "userId": "",\n  "action": "",\n  "metadata": {}\n}'
+                    android:text='{\n "amount" : 1000, \n "currency" : "USD" \n}'
                     android:textSize="14sp" />
 
             </LinearLayout>
