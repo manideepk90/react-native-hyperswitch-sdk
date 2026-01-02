@@ -60,19 +60,6 @@ let usePayment = (
         ->JSON.Encode.object
         ->JSON.stringify,
         applePayResponseHandler,
-        _ => {
-          logger(
-            ~logType=DEBUG,
-            ~value="apple_pay",
-            ~category=USER_EVENT,
-            ~paymentMethod="apple_pay",
-            ~eventName=APPLE_PAY_BRIDGE_SUCCESS,
-            (),
-          )
-        },
-        _ => {
-          clearTimeout(timerId)
-        },
       )
     } else {
       webkitLaunchApplePay(

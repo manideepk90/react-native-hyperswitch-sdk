@@ -97,8 +97,7 @@ class HyperswitchReactNative(private val activity: Activity) : SDKInterface {
         } else {
             activity.startActivity(
                 Intent(
-                    activity.applicationContext,
-                    HyperActivity::class.java
+                    activity.applicationContext, HyperActivity::class.java
                 ).apply {
                     putExtra("flow", 1)
                     putExtra("configuration", bundle)

@@ -98,10 +98,10 @@ let make = (~props) => {
     // headlessModule.exitHeadless(
     //   PaymentConfirmTypes.defaultCancelError->HyperModule.stringifiedResStatus,
     // )
-    | err =>
-      headlessModule.exitHeadless(
-        {message: err, status: "failed"}->HyperModule.stringifiedResStatus,
-      )
+    | err => ()
+      // headlessModule.exitHeadless(
+      //   {message: err, status: "failed"}->HyperModule.stringifiedResStatus,
+      // )
     }
   }
 
@@ -120,14 +120,14 @@ let make = (~props) => {
     // headlessModule.exitHeadless(
     //   PaymentConfirmTypes.defaultCancelError->HyperModule.stringifiedResStatus,
     // )
-    | "Failed" =>
-      headlessModule.exitHeadless(
-        {message: "failed", status: "failed"}->HyperModule.stringifiedResStatus,
-      )
-    | "Error" =>
-      headlessModule.exitHeadless(
-        {message: "failed", status: "failed"}->HyperModule.stringifiedResStatus,
-      )
+    | "Failed" => ()
+      // headlessModule.exitHeadless(
+      //   {message: "failed", status: "failed"}->HyperModule.stringifiedResStatus,
+      // )
+    | "Error" => ()
+      // headlessModule.exitHeadless(
+      //   {message: "failed", status: "failed"}->HyperModule.stringifiedResStatus,
+      // )
     | _ =>
       let payment_data = var->Dict.get("payment_data")->Option.getOr(JSON.Encode.null)
 
@@ -141,9 +141,10 @@ let make = (~props) => {
           "Simulated Identifier",
         ) == "Simulated Identifier"
       ) {
-        headlessModule.exitHeadless(
-          {message: "Simulated Identifier", status: "failed"}->HyperModule.stringifiedResStatus,
-        )
+        ()
+        // headlessModule.exitHeadless(
+        //   {message: "Simulated Identifier", status: "failed"}->HyperModule.stringifiedResStatus,
+        // )
       } else {
         let paymentData =
           [
@@ -285,30 +286,6 @@ let make = (~props) => {
           ->JSON.stringify,
           var => {
             applePayCallback(var)->ignore
-          },
-          _ => {
-            logWrapper(
-              ~logType=DEBUG,
-              ~eventName=APPLE_PAY_BRIDGE_SUCCESS,
-              ~url="",
-              ~customLogUrl=nativeProp.customLogUrl,
-              ~env=nativeProp.env,
-              ~category=API,
-              ~statusCode="",
-              ~apiLogType=None,
-              ~data=JSON.Encode.null,
-              ~publishableKey=nativeProp.publishableKey,
-              ~paymentId="",
-              ~paymentMethod=None,
-              ~paymentExperience=None,
-              ~timestamp=0.,
-              ~latency=0.,
-              ~version=nativeProp.hyperParams.sdkVersion,
-              (),
-            )
-          },
-          _ => {
-            clearTimeout(timerId)
           },
         )
       | _ => ()

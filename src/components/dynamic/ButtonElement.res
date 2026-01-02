@@ -257,20 +257,6 @@ let make = (
           ->JSON.Encode.object
           ->JSON.stringify,
           confirmApplePay,
-          _ => {
-            logger(
-              ~logType=DEBUG,
-              ~value=paymentMethodData.payment_method_type,
-              ~category=USER_EVENT,
-              ~paymentMethod=paymentMethodData.payment_method_type,
-              ~eventName=APPLE_PAY_BRIDGE_SUCCESS,
-              ~paymentExperience=paymentMethodData.payment_experience,
-              (),
-            )
-          },
-          _ => {
-            clearTimeout(timerId)
-          },
         )
       }
     | SAMSUNG_PAY =>
