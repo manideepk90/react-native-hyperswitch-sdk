@@ -11,7 +11,8 @@ type module_ = {
 @val external require: string => module_ = "require"
 
 let (checkSamsungPayValidity, presentSamsungPayPaymentSheet, isAvailable) = switch try {
-  require("@juspay-tech/react-native-hyperswitch-samsung-pay")->Some
+  // require("@juspay-tech/react-native-hyperswitch-samsung-pay")->Some
+  None
 } catch {
 | _ => None
 } {

@@ -13,11 +13,12 @@ type module_ = {launchScanCard: (scanCardReturnType => unit) => unit, isAvailabl
 @val external require: string => module_ = "require"
 
 let (launchScanCardMod, isAvailable) = switch try {
-  require("@juspay-tech/react-native-hyperswitch-scancard")->Some
+  // require("@juspay-tech/react-native-hyperswitch-scancard")->Some
+  None
 } catch {
 | _ => None
 } {
-| Some(mod) => (mod.launchScanCard, mod.isAvailable)
+// | Some(mod) => (mod.launchScanCard, mod.isAvailable)
 | None => (_ => (), false)
 }
 let dictToScanCardReturnType = (scanCardReturnType: scanCardReturnType) => {

@@ -3,7 +3,8 @@ type module_ = {launchKount: (string, Dict.t<JSON.t> => unit) => unit}
 @val external require: string => module_ = "require"
 
 let launchKountMod = switch try {
-  require("react-native-hyperswitch-kount")->Some
+  // require("react-native-hyperswitch-kount")->Some
+  None
 } catch {
 | _ => None
 } {

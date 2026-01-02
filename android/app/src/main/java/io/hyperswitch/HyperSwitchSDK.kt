@@ -16,6 +16,7 @@ import com.facebook.react.defaults.DefaultReactHost
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.runtime.hermes.HermesInstance
+import io.hyperswitch.react.HyperSwitchPackage
 
 class HyperSwitchSDK(
     private val reactHost: ReactHost, private val reactNativeHost: ReactNativeHost
@@ -61,8 +62,7 @@ class HyperSwitchSDK(
             val reactHost: ReactHost by lazy {
                 getDefaultReactHost(
                     context = application,
-                    packageList =
-                        PackageList(application).packages,
+                    packageList = packageList,
                     jsMainModulePath = "index",
                     jsBundleAssetPath = "hyperswitch.bundle",
                     jsBundleFilePath = "assets://hyperswitch.bundle",
@@ -73,7 +73,7 @@ class HyperSwitchSDK(
             val reactNativeHost = object : DefaultReactNativeHost(application) {
                 override fun getPackages(): List<ReactPackage> = packageList
                 override fun getJSMainModuleName(): String = "index"
-                override fun getJSBundleFile(): String? {
+                override fun getJSBundleFile(): String {
                     return "assets://hyperswitch.bundle"
                 }
 
@@ -86,7 +86,9 @@ class HyperSwitchSDK(
         }
 
         fun init(application: Application, enableOTA: Boolean = true) {
-            init(application, packageList = PackageList(application).packages, enableOTA)
+            init(application, packageList = PackageList(application).packages.apply {
+                add(HyperSwitchPackage())
+            }, enableOTA)
         }
 
 

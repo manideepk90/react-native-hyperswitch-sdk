@@ -24,7 +24,8 @@ let (
   generateChallenge,
   isAvailable,
 ) = switch try {
-  require("@juspay-tech/react-native-hyperswitch-netcetera-3ds")->Some
+  // require("@juspay-tech/react-native-hyperswitch-netcetera-3ds")->Some
+  None
 } catch {
 | _ => None
 } {

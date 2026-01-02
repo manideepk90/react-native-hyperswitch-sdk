@@ -28,7 +28,8 @@ type module_ = {default: React.component<moduleProps>}
 @val external require: string => module_ = "require"
 
 let klarnaReactPaymentView = try {
-  require("react-native-klarna-inapp-sdk/index")->Some
+  // require("react-native-klarna-inapp-sdk/index")->Some
+  None
 } catch {
 | _ => None
 }

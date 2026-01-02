@@ -3,7 +3,8 @@ type module_ = {launchPayPal: (string, Dict.t<JSON.t> => unit) => unit}
 @val external require: string => module_ = "require"
 
 let payPalModule = try {
-  require("react-native-hyperswitch-paypal")->Some
+  // require("react-native-hyperswitch-paypal")->Some
+  None
 } catch {
 | _ => None
 }

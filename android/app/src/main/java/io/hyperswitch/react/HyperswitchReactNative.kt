@@ -74,8 +74,6 @@ class HyperswitchReactNative(private val activity: Activity) : SDKInterface {
     }
 
     private fun presentSheet(bundle: Bundle): Boolean {
-        Log.i("Manideep", "finally ${bundle.toString()}")
-
         if (activity is DefaultHardwareBackBtnHandler && activity is FragmentActivity) {
             val newReactNativeFragmentSheet =
                 HyperswitchFragment.Builder().setComponentName("hyperSwitch")
@@ -126,6 +124,7 @@ class HyperswitchReactNative(private val activity: Activity) : SDKInterface {
         }
         return bundle
     }
+
     override fun initializeReactNativeInstance() {
 
     }

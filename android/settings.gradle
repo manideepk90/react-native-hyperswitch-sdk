@@ -5,4 +5,4 @@ rootProject.name = 'hyperSwitch'
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
 
-include ':demo-app', ':hyperswitch-sdk-android-api', ':hyperswitch-sdk-android-common', ':hyperswitch-sdk-android-hyperota', ':hyperswitch-sdk-android-logger'
+include ':demo-app', ':hyperswitch-sdk-android-api', ':hyperswitch-sdk-android-common', ':hyperswitch-sdk-android-logger'

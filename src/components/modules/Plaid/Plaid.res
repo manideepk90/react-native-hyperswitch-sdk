@@ -15,7 +15,8 @@ external isAvailable: bool = "isAvailable"
 Plaid Link React Native SDK
 */
 let (create, open_, dismissLink) = switch try {
-  isAvailable ? require("react-native-plaid-link-sdk")->Some : None
+  // isAvailable ? require("react-native-plaid-link-sdk")->Some : None
+  None
 } catch {
 | _ =>
   // "'Plaid-link-sdk' not found. If you are sure the module exists, try restarting Metro. You may also want to run `yarn` or `npm install`.",
