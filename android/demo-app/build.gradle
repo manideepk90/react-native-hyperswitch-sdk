@@ -7,11 +7,13 @@ plugins {
 android {
     namespace 'io.hyperswitch.demoapp'
     compileSdk rootProject.ext.compileSdkVersion
+    ndkVersion rootProject.ext.ndkVersion
     sourceSets {
         main {
             java.srcDirs += ["${project(':app').buildDir}/generated/source/react/debug"]
         }
     }
+
     defaultConfig {
         applicationId "io.hyperswitch.demoapp"
         minSdk rootProject.ext.minSdkVersion
@@ -24,22 +26,30 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
 
             debuggable false
             jniDebuggable false
             renderscriptDebuggable false
             pseudoLocalesEnabled false
+            ndk {
+                abiFilters "armeabi-v7a", "arm64-v8a"
+                debugSymbolLevel 'NONE'  // Remove debug symbols to reduce .so file size
+            }
             // proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
-
         }
     }
     packagingOptions {
+        // Handle duplicates from :app and other React Native deps
         pickFirst "**/libc++_shared.so"
         pickFirst "**/libfbjni.so"
         pickFirst "**/libjsi.so"
+        pickFirst "**/libhermes.so"
         pickFirst "**/libreactnative.so"
+        pickFirst "**/libimagepipeline.so"
+        pickFirst "**/libnative-filters.so"
+        pickFirst "**/libnative-imagetranscoder.so"
     }
 }
 
@@ -52,3 +62,107 @@ dependencies {
     implementation 'org.slf4j:slf4j-nop:2.0.17'
     implementation "com.google.android.material:material:1.13.0"
 }
+
+// Custom strip task to reduce native library sizes
+// TEMPORARILY DISABLED TO TEST
+// afterEvaluate {
+//     // Create a separate strip task
+//     tasks.register('stripNativeLibs') {
+//         group = 'build'
+//         description = 'Strip native libraries to reduce size'
+//
+//         doLast {
+//             // Find NDK strip tool
+//             def ndkDir = null
+//             def localProps = new Properties()
+//             def localPropsFile = rootProject.file("local.properties")
+//             if (localPropsFile.exists()) {
+//                 localPropsFile.withInputStream { localProps.load(it) }
+//                 def sdkDir = localProps.getProperty("sdk.dir")
+//                 if (sdkDir) {
+//                     def ndkPath = new File(sdkDir, "ndk/${rootProject.ext.ndkVersion}")
+//                     if (ndkPath.exists()) {
+//                         ndkDir = ndkPath.absolutePath
+//                     }
+//                 }
+//             }
+//
+//             if (!ndkDir) {
+//                 println "Could not find NDK directory. Skipping stripping."
+//                 return
+//             }
+//
+//             def os = System.getProperty("os.name").toLowerCase()
+//             def arch = System.getProperty("os.arch").toLowerCase()
+//
+//             // Detect correct strip tool path
+//             def stripTool
+//             if (os.contains("mac")) {
+//                 if (arch.contains("aarch64") || arch.contains("arm64")) {
+//                     stripTool = "${ndkDir}/toolchains/llvm/prebuilt/darwin-arm64/bin/llvm-strip"
+//                 } else {
+//                     stripTool = "${ndkDir}/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-strip"
+//                 }
+//             } else {
+//                 stripTool = "${ndkDir}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip"
+//             }
+//
+//             // Fallback to find strip tool
+//             if (!file(stripTool).exists()) {
+//                 def possiblePaths = [
+//                     "${ndkDir}/toolchains/llvm/prebuilt/darwin-arm64/bin/llvm-strip",
+//                     "${ndkDir}/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-strip",
+//                     "${ndkDir}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip"
+//                 ]
+//                 for (path in possiblePaths) {
+//                     if (file(path).exists()) {
+//                         stripTool = path
+//                         break
+//                     }
+//                 }
+//             }
+//
+//             if (!file(stripTool).exists()) {
+//                 println "Strip tool not found at: ${stripTool}. Skipping stripping."
+//                 return
+//             }
+//
+//             println "Using strip tool: ${stripTool}"
+//
+//             // Strip all .so files in the merged native libs directory
+//             def mergedLibsDir = file("${buildDir}/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib")
+//             if (mergedLibsDir.exists()) {
+//                 mergedLibsDir.eachFileRecurse { file ->
+//                     if (file.name.endsWith('.so')) {
+//                         def originalSize = file.length()
+//                         def process = new ProcessBuilder(stripTool, '--strip-all', file.absolutePath)
+//                             .redirectErrorStream(true)
+//                             .start()
+//                         process.waitFor()
+//                         def newSize = file.length()
+//                         if (newSize < originalSize) {
+//                             def saved = (originalSize - newSize) / 1024 / 1024
+//                             println "Stripped ${file.name}: ${String.format("%.2f", originalSize / 1024 / 1024)}MB -> ${String.format("%.2f", newSize / 1024 / 1024)}MB (saved ${String.format("%.2f", saved)}MB)"
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+//
+//     // Run strip task after merging native libs, and make packaging depend on it
+//     tasks.named('mergeReleaseNativeLibs').configure {
+//         finalizedBy 'stripNativeLibs'
+//     }
+//
+//     // Make packaging depend on strip task so stripped libs are used
+//     // TEMPORARILY DISABLED TO TEST
+//     // tasks.whenTaskAdded { task ->
+//     //     if (task.name == 'packageReleaseBundle' || task.name == 'assembleRelease') {
+//     //         task.dependsOn 'stripNativeLibs'
+//     //     }
+//     }
+//
+//     // Disable the built-in strip task that's failing
+//     tasks.findByName('stripReleaseDebugSymbols')?.enabled = false
+// }

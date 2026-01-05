@@ -11,6 +11,7 @@ apply plugin: "com.facebook.react"
 react {
     /* Autolinking */
     autolinkLibrariesWithApp()
+    // enableSoCleanup.set(true)  // Disabled to keep native libraries
 
     /* Folders */
     //   The root of your project, i.e. where "package.json" lives. Default is '../..'
@@ -86,6 +87,9 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a"  // Remove x86, x86_64 if not needed
+        }
 
     }
     signingConfigs {
@@ -101,6 +105,11 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
+            ndk {
+                debugSymbolLevel 'NONE'  // Remove debug symbols to reduce .so file size
+            }
+            shrinkResources false
+
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.debug
@@ -110,17 +119,20 @@ android {
     }
 
     packagingOptions {
-        // Exclude libraries already provided by React Native
-//        pickFirst "**/libc++_shared.so"
-//        pickFirst "**/libfbjni.so"
-        exclude "lib/**/libc++_shared.so"
-        exclude "lib/**/libfbjni.so"
-        exclude "lib/**/libjsi.so"
-        exclude "lib/**/libhermes.so"
-        exclude "lib/**/libreactnative.so"
-        exclude "lib/**/libimagepipeline.so"
-        exclude "lib/**/libnative-filters.so"
-        exclude "lib/**/libnative-imagetranscoder.so"
+        // Use pickFirst instead of exclude to handle duplicates
+        pickFirst "**/libc++_shared.so"
+        pickFirst "**/libfbjni.so"
+        pickFirst "**/libjsi.so"
+        pickFirst "**/libhermes.so"
+        pickFirst "**/libreactnative.so"
+        pickFirst "**/libimagepipeline.so"
+        pickFirst "**/libnative-filters.so"
+        pickFirst "**/libnative-imagetranscoder.so"
+
+        // Also add these common React Native duplicates
+        pickFirst "**/libreactnativejni.so"
+        pickFirst "**/libturbomodulejsijni.so"
+        pickFirst "**/libappmodules.so"
     }
 
     publishing {
@@ -248,6 +260,115 @@ gradle.projectsEvaluated {
                 maven {
                     url("${project.rootDir}/maven")
                 }
+            }
+        }
+    }
+}
+
+android.libraryVariants.all { variant ->
+    if (variant.name == "release") {
+        variant.packageLibraryProvider.get().doLast {
+            // Find NDK strip tool
+            def ndkDir = null
+            def localProps = new Properties()
+            def localPropsFile = rootProject.file("local.properties")
+            if (localPropsFile.exists()) {
+                localPropsFile.withInputStream { localProps.load(it) }
+                def sdkDir = localProps.getProperty("sdk.dir")
+                if (sdkDir) {
+                    def ndkPath = new File(sdkDir, "ndk/${rootProject.ext.ndkVersion}")
+                    if (ndkPath.exists()) {
+                        ndkDir = ndkPath.absolutePath
+                    }
+                }
+            }
+
+            if (!ndkDir) {
+                println "Could not find NDK directory. Skipping stripping."
+                return
+            }
+
+            def os = System.getProperty("os.name").toLowerCase()
+            def arch = System.getProperty("os.arch").toLowerCase()
+
+            // Detect correct strip tool path
+            def stripTool
+            if (os.contains("mac")) {
+                if (arch.contains("aarch64") || arch.contains("arm64")) {
+                    stripTool = "${ndkDir}/toolchains/llvm/prebuilt/darwin-arm64/bin/llvm-strip"
+                } else {
+                    stripTool = "${ndkDir}/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-strip"
+                }
+            } else {
+                stripTool = "${ndkDir}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip"
+            }
+
+            // Fallback to find strip tool
+            if (!file(stripTool).exists()) {
+                def possiblePaths = [
+                    "${ndkDir}/toolchains/llvm/prebuilt/darwin-arm64/bin/llvm-strip",
+                    "${ndkDir}/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-strip",
+                    "${ndkDir}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip"
+                ]
+                for (path in possiblePaths) {
+                    if (file(path).exists()) {
+                        stripTool = path
+                        break
+                    }
+                }
+            }
+
+            if (!file(stripTool).exists()) {
+                println "Strip tool not found at: ${stripTool}. Skipping stripping."
+                return
+            }
+
+            println "Using strip tool: ${stripTool}"
+
+            // Strip all .so files in intermediates
+            fileTree("${buildDir}/intermediates/stripped_native_libs/release/out/lib").visit { FileVisitDetails details ->
+                if (details.file.name.endsWith('.so')) {
+                    def originalSize = details.file.length()
+                    def process = new ProcessBuilder(stripTool, '--strip-all', details.file.absolutePath)
+                        .redirectErrorStream(true)
+                        .start()
+                    process.waitFor()
+                    def newSize = details.file.length()
+                    if (newSize < originalSize) {
+                        def saved = (originalSize - newSize) / 1024 / 1024
+                        println "Stripped ${details.file.name}: ${String.format("%.2f", originalSize / 1024 / 1024)}MB -> ${String.format("%.2f", newSize / 1024 / 1024)}MB (saved ${String.format("%.2f", saved)}MB)"
+                    }
+                }
+            }
+
+            // Also strip in the final AAR output
+            def aarFile = file("${buildDir}/outputs/aar/${project.name}-release.aar")
+            if (aarFile.exists()) {
+                def tempDir = file("${buildDir}/tmp/aar-extract")
+                tempDir.mkdirs()
+
+                copy {
+                    from zipTree(aarFile)
+                    into tempDir
+                }
+
+                fileTree(tempDir).visit { FileVisitDetails details ->
+                    if (details.file.name.endsWith('.so')) {
+                        def originalSize = details.file.length()
+                        def process = new ProcessBuilder(stripTool, '--strip-all', details.file.absolutePath)
+                            .redirectErrorStream(true)
+                            .start()
+                        process.waitFor()
+                        def newSize = details.file.length()
+                        if (newSize < originalSize) {
+                            def saved = (originalSize - newSize) / 1024 / 1024
+                            println "Stripped AAR ${details.file.name}: ${String.format("%.2f", originalSize / 1024 / 1024)}MB -> ${String.format("%.2f", newSize / 1024 / 1024)}MB (saved ${String.format("%.2f", saved)}MB)"
+                        }
+                    }
+                }
+
+                ant.zip(destfile: aarFile, basedir: tempDir)
+                delete tempDir
             }
         }
     }

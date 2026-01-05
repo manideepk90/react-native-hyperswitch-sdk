@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler {
         setSupportActionBar(toolbar)
         backendUrlInput = findViewById(R.id.backendUrlInput)
         jsonInput = findViewById(R.id.jsonInput)
+        serverURL = loadServerUrl()
         backendUrlInput.setText(serverURL)
         backendUrlInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
