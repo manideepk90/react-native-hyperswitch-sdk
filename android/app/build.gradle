@@ -11,7 +11,6 @@ apply plugin: "com.facebook.react"
 react {
     /* Autolinking */
     autolinkLibrariesWithApp()
-    // enableSoCleanup.set(true)  // Disabled to keep native libraries
 
     /* Folders */
     //   The root of your project, i.e. where "package.json" lives. Default is '../..'
@@ -87,9 +86,6 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        ndk {
-            abiFilters "armeabi-v7a", "arm64-v8a"  // Remove x86, x86_64 if not needed
-        }
 
     }
     signingConfigs {
@@ -178,6 +174,252 @@ rootProject.allprojects {
 }
 
 apply plugin: "maven-publish"
+
+// Read versions from package.json
+def packageJsonVersions = [:]
+try {
+    def packageJsonFile = rootProject.file('../package.json')
+    def json = new groovy.json.JsonSlurper().parse(packageJsonFile)
+
+    packageJsonVersions = [
+        'react-native': json.dependencies.'react-native'?.toString()?.replaceAll('[\\^~]', ''),
+        'react-native-clipboard_clipboard': json.dependencies.'@react-native-clipboard/clipboard'?.toString()?.replaceAll('[\\^~]', ''),
+        'sentry_react-native': json.dependencies.'@sentry/react-native'?.toString()?.replaceAll('[\\^~]', ''),
+        'react-native-inappbrowser-reborn': json.dependencies.'react-native-inappbrowser-reborn'?.toString()?.replaceAll('[\\^~]', ''),
+        'react-native-safe-area-context': json.dependencies.'react-native-safe-area-context'?.toString()?.replaceAll('[\\^~]', ''),
+        'react-native-svg': json.dependencies.'react-native-svg'?.toString()?.replaceAll('[\\^~]', ''),
+        'callstack_repack': json.devDependencies.'@callstack/repack'?.toString()?.replaceAll('[\\^~]', ''),
+    ]
+    println "Loaded versions from package.json: ${packageJsonVersions}"
+} catch (Exception e) {
+    logger.warn("Failed to read package.json: ${e.message}")
+}
+
+// Function to resolve version - capture packageJsonVersions in closure
+def resolveVersion = { String groupId, String artifactId, String currentVersion ->
+    if (currentVersion != 'unspecified') {
+        return currentVersion
+    }
+    if (groupId == 'hyperSwitch') {
+        return packageJsonVersions[artifactId] ?: 'unspecified'
+    }
+    return currentVersion
+}
+
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = 'hyperSwitch'
+            artifactId = 'hyperswitch-sdk-android'
+            version = hyperswitchSdkVersion
+
+            afterEvaluate {
+                from components.release
+            }
+
+            pom {
+                name = 'Hyperswitch SDK for Android'
+                description = 'This is the Hyperswitch SDK for Android, providing seamless integration with the Hyperswitch platform.'
+                url = 'http://www.hyperswitch.io'
+
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution = 'repo'
+                    }
+                }
+
+                scm {
+                    url = 'https://github.com/hyperswitch/hyperswitch-sdk-android'
+                    connection = 'scm:git:git://github.com/juspay/hyperswitch-sdk-android.git'
+                    developerConnection = 'scm:git:ssh://git@github.com:juspay/hyperswitch-sdk-android.git'
+                    tag = 'HEAD'
+                }
+
+                developers {
+                    developer {
+                        id = 'manideepk90'
+                        name = 'manideep'
+                        email = 'kuntimaddi.manideep@juspay.in'
+                    }
+                }
+
+                withXml {
+                    def root = asNode()
+
+                    // Remove existing dependencies node and recreate with filtered dependencies
+                    def dependenciesNode = root.dependencies[0]
+                    if (dependenciesNode) {
+                        root.remove(dependenciesNode)
+                    }
+
+                    def dependencies = root.appendNode('dependencies')
+
+                    // Manually define the dependencies we want in the POM
+                    // Core React Native dependencies - use version from package.json
+                    def rnVersion = packageJsonVersions['react-native']
+                    if (rnVersion && rnVersion != 'unspecified') {
+                        addDependency(dependencies, 'com.facebook.react', 'react-native', rnVersion)
+                    }
+
+                    // Hermes - React Native 0.82.1 uses a specific Hermes version
+                    // We'll use the same version as react-native for simplicity
+                    if (rnVersion && rnVersion != 'unspecified') {
+                        addDependency(dependencies, 'com.facebook', 'hermes', rnVersion)
+                    }
+
+                    // Internal hyperswitch modules - use fixed versions
+                    addDependency(dependencies, 'io.hyperswitch', 'hyperswitch-sdk-android-api', '1.0.2')
+                    addDependency(dependencies, 'io.hyperswitch', 'hyperswitch-sdk-android-common', '1.0.0')
+                    addDependency(dependencies, 'io.hyperswitch', 'hyperswitch-sdk-android-logger', '1.0.1')
+
+                    // Kotlin stdlib
+                    addDependency(dependencies, 'org.jetbrains.kotlin', 'kotlin-stdlib', '2.1.20')
+
+                    // React Native third-party libraries
+                    addDependency(dependencies, 'com.facebook.react', 'react-native-clipboard', packageJsonVersions['react-native-clipboard_clipboard'])
+                    addDependency(dependencies, 'com.github.proyecto26', 'react-native-inappbrowser-reborn', packageJsonVersions['react-native-inappbrowser-reborn'])
+                    addDependency(dependencies, 'com.github.th3rdwave', 'react-native-safe-area-context', packageJsonVersions['react-native-safe-area-context'])
+                    addDependency(dependencies, 'com.github.react-native-community', 'react-native-svg', packageJsonVersions['react-native-svg'])
+                    addDependency(dependencies, 'io.sentry', 'sentry-android', packageJsonVersions['sentry_react-native'])
+                    addDependency(dependencies, 'com.github.callstack', 'repack', packageJsonVersions['callstack_repack'])
+                }
+            }
+        }
+    }
+}
+
+// Helper function to add a dependency to the POM
+def addDependency(def dependenciesNode, String groupId, String artifactId, String version) {
+    if (version && version != 'unspecified') {
+        def dependency = dependenciesNode.appendNode('dependency')
+        dependency.appendNode('groupId', groupId)
+        dependency.appendNode('artifactId', artifactId)
+        dependency.appendNode('version', version)
+    }
+}
+
+// Fix Gradle module metadata to replace 'unspecified' versions with versions from package.json
+tasks.register('fixModuleMetadata') {
+    doLast {
+        def outputFile = file("${buildDir}/publications/release/module.json")
+        if (outputFile.exists()) {
+            def json = new groovy.json.JsonSlurper().parse(outputFile)
+            json.component.variants.each { variant ->
+                variant.dependencies?.each { dep ->
+                    if (dep.version?.requires == 'unspecified') {
+                        def resolvedVersion = resolveVersion(dep.group, dep.module, 'unspecified')
+                        if (resolvedVersion != 'unspecified') {
+                            dep.version.requires = resolvedVersion
+                        }
+                    }
+                }
+            }
+            outputFile.text = groovy.json.JsonOutput.toJson(json)
+            println "Fixed module metadata with versions from package.json"
+        }
+    }
+}
+
+// Fix module metadata in local Maven repository after publishing
+tasks.register('fixPublishedModuleMetadata') {
+    doLast {
+        def mavenModuleFile = file("${System.getProperty('user.home')}/.m2/repository/hyperSwitch/hyperswitch-sdk-android/${hyperswitchSdkVersion}/hyperswitch-sdk-android-${hyperswitchSdkVersion}.module")
+        if (mavenModuleFile.exists()) {
+            def json = new groovy.json.JsonSlurper().parse(mavenModuleFile)
+
+            // Mapping for third-party dependencies to their correct Maven coordinates
+            def thirdPartyMapping = [
+                'react-native-clipboard_clipboard': [groupId: 'com.facebook.react', artifactId: 'react-native-clipboard'],
+                'react-native-inappbrowser-reborn': [groupId: 'com.github.proyecto26', artifactId: 'react-native-inappbrowser-reborn'],
+                'react-native-safe-area-context': [groupId: 'com.github.th3rdwave', artifactId: 'react-native-safe-area-context'],
+                'react-native-svg': [groupId: 'com.github.react-native-community', artifactId: 'react-native-svg'],
+                'sentry_react-native': [groupId: 'io.sentry', artifactId: 'sentry-android'],
+                'callstack_repack': [groupId: 'com.github.callstack', artifactId: 'repack']
+            ]
+
+            json.variants.each { variant ->
+                // Filter out demo dependencies and fix unspecified versions and groupIds
+                def filteredDeps = []
+                variant.dependencies?.each { dep ->
+                    // Skip demo dependencies
+                    if (dep.module == 'react-native-lib-demo') {
+                        return
+                    }
+
+                    // Fix groupId and artifactId for third-party dependencies
+                    if (dep.group == 'hyperSwitch' && thirdPartyMapping.containsKey(dep.module)) {
+                        def mapping = thirdPartyMapping[dep.module]
+                        dep.group = mapping.groupId
+                        dep.module = mapping.artifactId
+                    }
+
+                    // Fix missing or unspecified versions using package.json versions
+                    def needsVersion = !dep.version || dep.version.requires == 'unspecified'
+                    if (needsVersion) {
+                        def resolvedVersion = null
+
+                        // Map for core React Native dependencies (these come from react-android and hermes-android)
+                        if (dep.group == 'com.facebook.react' && dep.module == 'react-android') {
+                            resolvedVersion = packageJsonVersions['react-native']
+                        } else if (dep.group == 'com.facebook.react' && dep.module == 'hermes-android') {
+                            resolvedVersion = packageJsonVersions['react-native']
+                        } else if (dep.group == 'io.hyperswitch') {
+                            // Internal hyperswitch modules
+                            if (dep.module == 'hyperswitch-sdk-android-api') {
+                                resolvedVersion = '1.0.2'
+                            } else if (dep.module == 'hyperswitch-sdk-android-common') {
+                                resolvedVersion = '1.0.0'
+                            } else if (dep.module == 'hyperswitch-sdk-android-logger') {
+                                resolvedVersion = '1.0.1'
+                            }
+                        } else if (dep.group == 'org.jetbrains.kotlin' && dep.module == 'kotlin-stdlib') {
+                            resolvedVersion = '2.1.20'
+                        } else if (dep.group == 'com.facebook.react' && dep.module == 'react-native-clipboard') {
+                            resolvedVersion = packageJsonVersions['react-native-clipboard_clipboard']
+                        } else if (dep.group == 'com.github.proyecto26' && dep.module == 'react-native-inappbrowser-reborn') {
+                            resolvedVersion = packageJsonVersions['react-native-inappbrowser-reborn']
+                        } else if (dep.group == 'com.github.th3rdwave' && dep.module == 'react-native-safe-area-context') {
+                            resolvedVersion = packageJsonVersions['react-native-safe-area-context']
+                        } else if (dep.group == 'com.github.react-native-community' && dep.module == 'react-native-svg') {
+                            resolvedVersion = packageJsonVersions['react-native-svg']
+                        } else if (dep.group == 'io.sentry' && dep.module == 'sentry-android') {
+                            resolvedVersion = packageJsonVersions['sentry_react-native']
+                        } else if (dep.group == 'com.github.callstack' && dep.module == 'repack') {
+                            resolvedVersion = packageJsonVersions['callstack_repack']
+                        } else {
+                            // Try resolveVersion for other dependencies
+                            resolvedVersion = resolveVersion(dep.group, dep.module, 'unspecified')
+                        }
+
+                        if (resolvedVersion && resolvedVersion != 'unspecified') {
+                            if (!dep.version) {
+                                dep.version = [:]
+                            }
+                            dep.version.requires = resolvedVersion
+                        }
+                    }
+                    filteredDeps << dep
+                }
+                variant.dependencies = filteredDeps
+            }
+            mavenModuleFile.text = groovy.json.JsonOutput.toJson(json)
+            println "Fixed published module metadata with versions and correct groupIds from package.json"
+        }
+    }
+}
+
+// Ensure fixModuleMetadata runs after GenerateModuleMetadata
+tasks.withType(GenerateModuleMetadata).configureEach {
+    tasks.named('fixModuleMetadata').get().mustRunAfter(it)
+}
+
+// Ensure fixPublishedModuleMetadata runs after publish
+tasks.named('publishReleasePublicationToMavenLocal').configure {
+    finalizedBy 'fixPublishedModuleMetadata'
+}
+
 def runtimeDeps = [
         'react-native-inappbrowser-reborn',
         'react-native-svg',
@@ -215,9 +457,9 @@ def configurePomMetadata = { root ->
     scmNode.appendNode('tag', 'HEAD')
 
     def developerNode = root.appendNode('developers').appendNode('developer')
-    developerNode.appendNode('id', 'sh-iv-am')
-    developerNode.appendNode('name', 'Shivam')
-    developerNode.appendNode('email', 'shivam.shashank@juspay.in')
+    developerNode.appendNode('id', 'manideepk90')
+    developerNode.appendNode('name', 'Manideep')
+    developerNode.appendNode('email', 'kuntimaddi.manideep@juspay.in')
 }
 
 gradle.projectsEvaluated {
